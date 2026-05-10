@@ -19,7 +19,7 @@ export const CollectionsSection: React.FC<{ className?: string }> = async ({
 
   return (
     <Carousel
-      heading={<h3 className="text-md md:text-2xl">Collections</h3>}
+      heading={<h3 className="text-md md:text-2xl">Dernières collections</h3>}
       button={
         <>
           <LocalizedButtonLink
@@ -27,10 +27,10 @@ export const CollectionsSection: React.FC<{ className?: string }> = async ({
             size="md"
             className="h-full flex-1 max-md:hidden md:h-auto"
           >
-            View All
+            Toutes les collections
           </LocalizedButtonLink>
           <LocalizedButtonLink href="/store" size="sm" className="md:hidden">
-            View All
+            Toutes les collections
           </LocalizedButtonLink>
         </>
       }

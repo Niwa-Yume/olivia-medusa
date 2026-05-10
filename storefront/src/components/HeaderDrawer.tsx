@@ -5,7 +5,7 @@ import { Button } from "@/components/Button"
 import { Icon } from "@/components/Icon"
 import { Drawer } from "@/components/Drawer"
 import { LocalizedLink } from "@/components/LocalizedLink"
-import { RegionSwitcher } from "@/components/RegionSwitcher"
+// import { RegionSwitcher } from "@/components/RegionSwitcher"
 import { SearchField } from "@/components/SearchField"
 import { useSearchParams } from "next/navigation"
 
@@ -58,27 +58,21 @@ export const HeaderDrawer: React.FC<{
                   href="/about"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  About
+                  Vêtements
                 </LocalizedLink>
                 <LocalizedLink
                   href="/inspiration"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Inspiration
+                Accessoires
                 </LocalizedLink>
                 <LocalizedLink
                   href="/store"
                   onClick={() => setIsMenuOpen(false)}
-                >
-                  Shop
+                  >
+                  Bijoux
                 </LocalizedLink>
               </div>
-              <RegionSwitcher
-                countryOptions={countryOptions}
-                className="mt-auto ml-8 mb-8"
-                selectButtonClassName="max-md:text-base gap-2 p-1 w-auto"
-                selectIconClassName="text-current w-6 h-6"
-              />
             </div>
           </>
         )}

@@ -1,9 +1,9 @@
 import { Metadata } from "next"
 import Image from "next/image"
 import { getRegion } from "@lib/data/regions"
-import { getProductTypesList } from "@lib/data/product-types"
+// import { getProductTypesList } from "@lib/data/product-types"
 import { Layout, LayoutColumn } from "@/components/Layout"
-import { LocalizedLink } from "@/components/LocalizedLink"
+// import { LocalizedLink } from "@/components/LocalizedLink"
 import { CollectionsSection } from "@/components/CollectionsSection"
 
 export const metadata: Metadata = {
@@ -12,48 +12,45 @@ export const metadata: Metadata = {
     "A performant frontend ecommerce starter template with Next.js 14 and Medusa.",
 }
 
-const ProductTypesSection: React.FC = async () => {
-  const productTypes = await getProductTypesList(0, 20, [
-    "id",
-    "value",
-    "metadata",
-  ])
+// const ProductTypesSection: React.FC = async () => {
+//   const productTypes = await getProductTypesList(0, 20, [
+//     "id",
+//     "value",
+//     "metadata",
+//   ])
 
-  if (!productTypes) {
-    return null
-  }
+//   if (!productTypes) {
+//     return null
+//   }
 
-  return (
-    <Layout className="mb-26 md:mb-36 max-md:gap-x-2">
-      <LayoutColumn>
-        <h3 className="text-md md:text-2xl mb-8 md:mb-15">Our products</h3>
-      </LayoutColumn>
-      {productTypes.productTypes.map((productType, index) => (
-        <LayoutColumn
-          key={productType.id}
-          start={index % 2 === 0 ? 1 : 7}
-          end={index % 2 === 0 ? 7 : 13}
-        >
-          <LocalizedLink href={`/store?type=${productType.value}`}>
-            {typeof productType.metadata?.image === "object" &&
-              productType.metadata.image &&
-              "url" in productType.metadata.image &&
-              typeof productType.metadata.image.url === "string" && (
-                <Image
-                  src={productType.metadata.image.url}
-                  width={1200}
-                  height={900}
-                  alt={productType.value}
-                  className="mb-2 md:mb-8"
-                />
-              )}
-            <p className="text-xs md:text-md">{productType.value}</p>
-          </LocalizedLink>
-        </LayoutColumn>
-      ))}
-    </Layout>
-  )
-}
+//   return (
+//     <Layout className="mb-26 md:mb-36 max-md:gap-x-2">
+//       {productTypes.productTypes.map((productType, index) => (
+//         <LayoutColumn
+//           key={productType.id}
+//           start={index % 2 === 0 ? 1 : 7}
+//           end={index % 2 === 0 ? 7 : 13}
+//         >
+//           <LocalizedLink href={`/store?type=${productType.value}`}>
+//             {typeof productType.metadata?.image === "object" &&
+//               productType.metadata.image &&
+//               "url" in productType.metadata.image &&
+//               typeof productType.metadata.image.url === "string" && (
+//                 <Image
+//                   src={productType.metadata.image.url}
+//                   width={1200}
+//                   height={900}
+//                   alt={productType.value}
+//                   className="mb-2 md:mb-8"
+//                 />
+//               )}
+//             <p className="text-xs md:text-md">{productType.value}</p>
+//           </LocalizedLink>
+//         </LayoutColumn>
+//       ))}
+//     </Layout>
+//   )
+// }
 
 export default async function Home({
   params,
@@ -79,61 +76,43 @@ export default async function Home({
         />
       </div>
       <div className="pt-8 pb-26 md:pt-26 md:pb-36">
-        <Layout className="mb-26 md:mb-36">
-          <LayoutColumn start={1} end={{ base: 13, md: 8 }}>
-            <h3 className="text-md max-md:mb-6 md:text-2xl">
-              Elevate Your Living Space with Unmatched Comfort & Style
-            </h3>
-          </LayoutColumn>
-          <LayoutColumn start={{ base: 1, md: 9 }} end={13}>
-            <div className="flex items-center h-full">
-              <div className="md:text-md">
-                <p>Discover Your Perfect Sofa Today</p>
-                <LocalizedLink href="/store" variant="underline">
-                  Explore Now
-                </LocalizedLink>
-              </div>
-            </div>
-          </LayoutColumn>
-        </Layout>
-        <ProductTypesSection />
         <CollectionsSection className="mb-22 md:mb-36" />
         <Layout>
           <LayoutColumn className="col-span-full">
             <h3 className="text-md md:text-2xl mb-8 md:mb-16">
-              About Sofa Society
+              Qui suis-je ?
             </h3>
-            <Image
-              src="/images/content/gray-sofa-against-concrete-wall.png"
-              width={2496}
-              height={1400}
-              alt="Gray sofa against concrete wall"
-              className="mb-8 md:mb-16 max-md:aspect-[3/2] max-md:object-cover"
-            />
           </LayoutColumn>
           <LayoutColumn start={1} end={{ base: 13, md: 7 }}>
             <h2 className="text-md md:text-2xl">
-              At Sofa Society, we believe that a sofa is the heart of every
-              home.
+              La créativité! Une aventure en ligne entre vous et moi
             </h2>
+            <Image
+          src="/images/content/Olivia-whoami.jpg"
+          width={390}
+          height={700}
+          alt="Olivia whoami"
+          className="rounded-full md:object-cover ml-15 mt-5"
+        />
           </LayoutColumn>
           <LayoutColumn
             start={{ base: 1, md: 8 }}
             end={13}
             className="mt-6 md:mt-19"
           >
-            <div className="md:text-md">
+            <div  className="mt-6 md:text-md">
               <p className="mb-5 md:mb-9">
-                We are dedicated to delivering high-quality, thoughtfully
-                designed sofas that merge comfort and style effortlessly.
+                Une jeune fille née à Genève se révélant très créative, demanda pour son 12ème anniversaire une machine à coudre.
               </p>
               <p className="mb-5 md:mb-3">
-                Our mission is to transform your living space into a sanctuary
-                of relaxation and beauty, with products built to last.
+                Ce fut le début de mon incroyable aventure.
+Avec le soutien de mes parents, j’ai entrepris des études de « Haute Couture » Coupe-Couture section femme; Modéliste et Coupe-Couture section homme, ce sont les trois diplômes que j’ai obtenu durant mes cinq années d’études.
               </p>
-              <LocalizedLink href="/about" variant="underline">
-                Read more about Sofa Society
-              </LocalizedLink>
+              <p className="mb-5 md:mb-3">
+                Mon entourage et mes amis qui ont participé à mes défilés et vu mes créations, m’ont vivement encouragé à créer ma propre marque de vêtements « OProcaccini ».
+La mode étant ma passion, je souhaite la partager avec toutes et tous les passionnés comme moi.
+Ma boutique de vente en ligne vous permettra de visualiser et d’accéder à toutes mes créations, allant du Vêtement Haute Couture, passant par tous types d’Accessoires et Bijoux faits main. 
+              </p>
             </div>
           </LayoutColumn>
         </Layout>
