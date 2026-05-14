@@ -1,0 +1,81 @@
+:root {
+    --color-bg:         #F2BBBE;
+    --color-bg-section: #F2BBBE;
+    --color-bg-nav:     #3B1A1C;
+    --color-bg-footer:  #3B1A1C;
+    --color-text:       #3B1A1C;
+    --color-text-muted: #7A4F52;
+    --color-text-on-dark: #FAF7F5;
+    --color-accent:     #C4FDFB;
+}
+
+html,
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+.theme-section {
+    background-color: var(--color-bg-section);
+}
+
+.theme-text-muted {
+    color: var(--color-text-muted);
+}
+
+/* Navigation */
+.theme-nav {
+    background-color: var(--color-bg-nav);
+    color: var(--color-text-on-dark);
+}
+
+.theme-nav a {
+    color: var(--color-text-on-dark);
+    transition: color 0.2s ease;
+}
+
+.theme-nav a:hover,
+.theme-nav a:focus {
+    color: var(--color-accent);
+}
+
+/* Dropdown */
+.theme-dropdown {
+    background-color: var(--color-bg-nav);
+    color: var(--color-text-on-dark);
+    border-top: 2px solid black;
+}
+
+.theme-dropdown a:hover {
+    color: var(--color-accent);
+}
+
+/* Footer */
+.theme-footer {
+    background-color: var(--color-bg-footer);
+    color: var(--color-text-on-dark);
+}
+
+.theme-footer a {
+    color: var(--color-text-on-dark);
+    transition: color 0.2s ease;
+}
+
+.theme-footer a:hover {
+    color: var(--color-accent);
+}
+
+.theme-footer-title {
+    color: var(--color-accent);
+    font-weight: 500;
+}
+
+/* Accent générique */
+.theme-accent {
+    color: var(--color-accent);
+}
+
+.theme-accent-bg {
+    background-color: var(--color-accent);
+    color: var(--color-text);
+}

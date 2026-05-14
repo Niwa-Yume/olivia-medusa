@@ -38,7 +38,8 @@ async function getImageUrlContent(url: string) {
 
   const arrayBuffer = await response.arrayBuffer();
 
-  return Buffer.from(arrayBuffer).toString('binary');
+  // uploadFilesWorkflow attend une string base64 pour les binaires (images).
+  return Buffer.from(arrayBuffer).toString('base64');
 }
 
 export default async function seedDemoData({ container }: ExecArgs) {
