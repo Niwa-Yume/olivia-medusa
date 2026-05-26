@@ -26,7 +26,7 @@ type RefinementListProps = {
 }
 
 const RefinementList = ({
-  title = "Shop",
+  title = "Titre de la catégorie",
   collections,
   collection,
   categories,

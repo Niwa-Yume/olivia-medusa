@@ -1,14 +1,11 @@
 import { Metadata } from "next"
-import Image from "next/image"
 import { StoreRegion } from "@medusajs/types"
 import { listRegions } from "@lib/data/regions"
 import { Layout, LayoutColumn } from "@/components/Layout"
-import { LocalizedLink } from "@/components/LocalizedLink"
-import { CollectionsSection } from "@/components/CollectionsSection"
 
 export const metadata: Metadata = {
-  title: "Inspiration",
-  description: "Get inspired by our latest collections",
+  title: "Contact",
+  description: "Contactez-nous pour toute question sur nos créations.",
 }
 
 export async function generateStaticParams() {
@@ -25,175 +22,184 @@ export async function generateStaticParams() {
     )
   )
 
-  const staticParams = countryCodes.map((countryCode) => ({
-    countryCode,
-  }))
-
-  return staticParams
+  return countryCodes.map((countryCode) => ({ countryCode }))
 }
 
 export default function InspirationPage() {
   return (
-    <>
-      <div className="max-md:pt-18">
-        <Image
-          src="/images/content/living-room-dark-green-three-seater-sofa.png"
-          width={2880}
-          height={1500}
-          alt="Living room with dark green three-seater sofa"
-          className="md:h-screen md:object-cover mb-8 md:mb-26"
-        />
-      </div>
-      <div className="pb-26 md:pb-36">
+    <div className="max-md:pt-18 pb-26 md:pb-36">
+      {/* ── Hero titre ── */}
+      <div className="pt-16 md:pt-26 pb-16 md:pb-24 border-b border-grayscale-100">
         <Layout>
-          <LayoutColumn start={1} end={{ base: 13, md: 8 }}>
-            <h3 className="text-md mb-6 md:mb-16 md:text-2xl">
-              The Astrid Curve sofa is a masterpiece of minimalism and luxury.
-            </h3>
-            <div className="md:text-md max-md:mb-16 max-w-135">
-              <p>
-                Our design philosophy revolves around creating pieces that are
-                both beautiful and practical. Inspired by Scandinavian
-                simplicity, modern luxury, and timeless classics.
-              </p>
-            </div>
-          </LayoutColumn>
-          <LayoutColumn start={{ base: 1, md: 9 }} end={13}>
-            <LocalizedLink href="/products/astrid-curve">
-              <Image
-                src="/images/content/dark-gray-three-seater-sofa.png"
-                width={768}
-                height={572}
-                alt="Dark gray three-seater sofa"
-                className="mb-4 md:mb-6"
-              />
-              <div className="flex justify-between">
-                <div>
-                  <p className="mb-1">Astrid Curve</p>
-                  <p className="text-grayscale-500 text-xs">
-                    Scandinavian Simplicity
-                  </p>
-                </div>
-                <div>
-                  <p className="font-semibold">1500€</p>
-                </div>
-              </div>
-            </LocalizedLink>
-          </LayoutColumn>
-          <LayoutColumn>
-            <Image
-              src="/images/content/living-room-brown-armchair-gray-corner-sofa.png"
-              width={2496}
-              height={1404}
-              alt="Living room with brown armchair and gray corner sofa"
-              className="mt-26 md:mt-36 mb-8 md:mb-26"
-            />
-          </LayoutColumn>
-          <LayoutColumn start={1} end={{ base: 13, md: 8 }}>
-            <h3 className="text-md mb-6 md:mb-16 md:text-2xl">
-              Haven Sofas have minimalistic designs, neutral colors, and
-              high-quality textures.
-            </h3>
-            <div className="md:text-md max-md:mb-16 max-w-135">
-              <p>
-                Perfect for those who seek comfort with a clean and understated
-                aesthetic. This collection brings the essence of Scandinavian
-                elegance to your living room.
-              </p>
-            </div>
-          </LayoutColumn>
-          <LayoutColumn start={{ base: 1, md: 9 }} end={13}>
-            <LocalizedLink
-              href="/products/nordic-haven"
-              className="mb-8 md:mb-16 inline-block"
-            >
-              <Image
-                src="/images/content/gray-three-seater-sofa.png"
-                width={768}
-                height={572}
-                alt="Gray three-seater sofa"
-                className="mb-4 md:mb-6"
-              />
-              <div className="flex justify-between">
-                <div>
-                  <p className="mb-1">Nordic Haven</p>
-                  <p className="text-grayscale-500 text-xs">
-                    Scandinavian Simplicity
-                  </p>
-                </div>
-                <div>
-                  <p className="font-semibold">1500€</p>
-                </div>
-              </div>
-            </LocalizedLink>
-            <LocalizedLink href="/products/nordic-breeze">
-              <Image
-                src="/images/content/gray-arm-chair.png"
-                width={768}
-                height={572}
-                alt="Gray arm chair"
-                className="mb-4 md:mb-6"
-              />
-              <div className="flex justify-between">
-                <div>
-                  <p className="mb-1">Nordic Breeze</p>
-                  <p className="text-grayscale-500 text-xs">
-                    Scandinavian Simplicity
-                  </p>
-                </div>
-                <div>
-                  <p className="font-semibold">1200€</p>
-                </div>
-              </div>
-            </LocalizedLink>
+          <LayoutColumn start={1} end={{ base: 13, md: 9 }}>
+            <p className=" text-xs uppercase tracking-widest mb-4 md:mb-6">
+              Nous écrire
+            </p>
+            <h1 className="text-2xl md:text-4xl font-medium leading-tight">
+              Une question sur une création,
+              <br className="max-md:hidden" /> une commande ou un projet ?
+            </h1>
           </LayoutColumn>
         </Layout>
-        <Image
-          src="/images/content/living-room-gray-two-seater-puffy-sofa.png"
-          width={2880}
-          height={1618}
-          alt="Living room with gray two-seater puffy sofa"
-          className="md:h-screen md:object-cover mt-26 md:mt-36 mb-8 md:mb-26"
-        />
-        <Layout>
-          <LayoutColumn start={1} end={{ base: 13, md: 8 }}>
-            <h3 className="text-md mb-6 md:mb-16 md:text-2xl">
-              Oslo Drift is infused with playful textures and vibrant patterns
-              with eclectic vibes.
-            </h3>
-            <div className="md:text-md max-md:mb-16 max-w-135">
-              <p>
-                Whether you&apos;re looking for bold statement pieces or subtle
-                elegance, this collection elevates your home with a touch of
-                glamour, sophistication, and unmatched coziness.
+      </div>
+
+      {/* ── Contenu principal ── */}
+      <Layout>
+        {/* Formulaire */}
+        <LayoutColumn start={1} end={{ base: 13, md: 8 }}>
+          <div className="pt-16 md:pt-24">
+            <ContactForm />
+          </div>
+        </LayoutColumn>
+
+        {/* Infos de contact */}
+        <LayoutColumn start={{ base: 1, md: 9 }} end={13}>
+          <div className="pt-16 md:pt-24 max-md:border-t max-md:border-grayscale-100 md:pl-16 md:border-l md:border-grayscale-100">
+            <div className="mb-12 md:mb-16">
+              <p className="text-xs uppercase tracking-widest  mb-4">
+                Atelier
+              </p>
+              <p className="text-md font-medium mb-1">OProcaccini</p>
+              <p className="">Genève, Suisse</p>
+            </div>
+
+            <div className="mb-12 md:mb-16">
+              <p className="text-xs uppercase tracking-widest  mb-4">
+                E-mail
+              </p>
+              <a
+                href="mailto:contact@oprocaccini.ch"
+                className="text-md font-medium hover: transition-colors"
+              >
+                contact@oprocaccini.com
+              </a>
+            </div>
+
+            <div className="mb-12 md:mb-16">
+              <p className="text-xs uppercase tracking-widest  mb-4">
+                Instagram
+              </p>
+              <a
+                href="https://instagram.com/creations.procaccini"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-md font-medium hover: transition-colors"
+              >
+                @creations.procaccini
+              </a>
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-widest  mb-4">
+                À noter
+              </p>
+              <p className=" text-sm leading-relaxed">
+                Aucun retour ni échange possible.
+                <br />
+                Toutes les pièces sont des éditions
+                <br />
+                limitées cousues main.
               </p>
             </div>
-          </LayoutColumn>
-          <LayoutColumn start={{ base: 1, md: 9 }} end={13}>
-            <LocalizedLink href="/products/oslo-drift">
-              <Image
-                src="/images/content/white-two-seater-sofa.png"
-                width={768}
-                height={572}
-                alt="White two-seater sofa"
-                className="mb-4 md:mb-6"
-              />
-              <div className="flex justify-between">
-                <div>
-                  <p className="mb-1">Oslo Drift</p>
-                  <p className="text-grayscale-500 text-xs">
-                    Scandinavian Simplicity
-                  </p>
-                </div>
-                <div>
-                  <p className="font-semibold">1500€</p>
-                </div>
-              </div>
-            </LocalizedLink>
-          </LayoutColumn>
-        </Layout>
-        <CollectionsSection className="mt-26 md:mt-36" />
+          </div>
+        </LayoutColumn>
+      </Layout>
+    </div>
+  )
+}
+
+/* ── Formulaire ── */
+function ContactForm() {
+  return (
+    <form
+      action="mailto:contact@oprocaccini.com"
+      method="POST"
+      encType="text/plain"
+      className="space-y-8"
+    >
+      {/* Nom + Prénom */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-xs uppercase tracking-widest  mb-3">
+            Prénom
+          </label>
+          <input
+            type="text"
+            name="prenom"
+            required
+            placeholder="Votre prénom"
+            className="w-full border-b border-grayscale-200 bg-transparent pb-3 text-sm  focus:border-black focus:outline-none transition-colors placeholder:text-white"
+          />
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-widest  mb-3">
+            Nom
+          </label>
+          <input
+            type="text"
+            name="nom"
+            required
+            placeholder="Votre nom"
+            className="w-full border-b border-grayscale-200 bg-transparent pb-3 text-sm  focus:border-black focus:outline-none transition-colors placeholder:text-white"
+          />
+        </div>
       </div>
-    </>
+
+      {/* E-mail */}
+      <div>
+        <label className="block text-xs uppercase tracking-widest  mb-3">
+          E-mail
+        </label>
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="votre@email.com"
+          className="w-full border-b border-grayscale-200 bg-transparent pb-3 text-sm  focus:border-black focus:outline-none transition-colors placeholder:text-white"
+        />
+      </div>
+
+      {/* Sujet */}
+      <div>
+        <label className="block text-xs uppercase tracking-widest mb-3">
+          Sujet
+        </label>
+        <select
+          name="sujet"
+          className="[&:has(option[value='']:checked)]:text-white w-full border-b border-grayscale-200 bg-brand-salmon pb-3 text-sm  focus:border-black focus:outline-none transition-colors appearance-none cursor-pointer"
+        >
+          <option value="">Choisir un sujet</option>
+          <option value="commande">Question sur une commande</option>
+          <option value="produit">Question sur un produit</option>
+          <option value="creation">Demande de création sur mesure</option>
+          <option value="collaboration">Collaboration</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+
+      {/* Message */}
+      <div>
+        <label className="block text-xs uppercase tracking-widest  mb-3">
+          Message
+        </label>
+        <textarea
+          name="message"
+          required
+          rows={5}
+          placeholder="Votre message..."
+          className="w-full border-b border-grayscale-200 bg-transparent pb-3 text-sm  focus:border-black focus:outline-none transition-colors resize-none placeholder:text-white"
+        />
+      </div>
+
+      {/* Submit */}
+      <div className="pt-4">
+        <button
+          type="submit"
+          className="bg-black text-white text-xs uppercase tracking-widest px-10 py-4 hover:bg-grayscale-700 transition-colors"
+        >
+          Envoyer le message
+        </button>
+      </div>
+    </form>
   )
 }

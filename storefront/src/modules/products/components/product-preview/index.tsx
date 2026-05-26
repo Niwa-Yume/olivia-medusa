@@ -23,7 +23,7 @@ export default function ProductPreview({
         thumbnail={product.thumbnail}
         images={product.images}
         size="square"
-        className="mb-4 md:mb-6"
+        className="mb-4 md:mb-6 rounded-md"
       />
       <div className="flex justify-between max-md:flex-col">
         <div className="max-md:text-xs">

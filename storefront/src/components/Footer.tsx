@@ -16,7 +16,7 @@ export const Footer: React.FC = () => {
   return (
     <div
       className={twMerge(
-        "bg-grayscale-50 py-8 md:py-20",
+        "bg-brand-salmon py-8 md:py-20",
         isAuthPage && "hidden"
       )}
     >
