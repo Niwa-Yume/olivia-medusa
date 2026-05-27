@@ -15,7 +15,6 @@ export const HeaderWrapper: React.FC<{ children?: React.ReactNode }> = ({
   const isPageWithHeroImage =
     !currentPath ||
     currentPath === "/" ||
-    currentPath === "/about" ||
     currentPath === "/inspiration" ||
     currentPath.startsWith("/collections")
   const isAlwaysSticky =
