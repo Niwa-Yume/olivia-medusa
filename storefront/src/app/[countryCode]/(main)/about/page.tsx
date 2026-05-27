@@ -94,7 +94,7 @@ export default function FaqPage() {
               Vous n&apos;avez pas trouvé la réponse à votre question ?
             </p>
             <p className="text-sm" style={{ color: "#7A4F52" }}>
-              Contactez-moi directement via mes réseaux sociaux ou par e-mail — je vous répondrai avec plaisir !
+              Contactez-moi directement via mes réseaux sociaux ou par e-mail ! Jße vous répondrai avec plaisir !
             </p>
           </div>
         </div>
