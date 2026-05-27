@@ -18,6 +18,8 @@ const StoreTemplate = async ({
   type,
   page,
   countryCode,
+  title,
+  forcedType,
 }: {
   sortBy?: SortOptions
   collection?: string[]
@@ -25,6 +27,8 @@ const StoreTemplate = async ({
   type?: string[]
   page?: string
   countryCode: string
+  title?: string
+  forcedType?: string
 }) => {
   const pageNumber = page ? parseInt(page, 10) : 1
 
@@ -35,10 +39,25 @@ const StoreTemplate = async ({
     getRegion(countryCode),
   ])
 
+  // Si un type est imposé par la page, on le fusionne avec les query params éventuels
+  const effectiveType = forcedType
+    ? Array.from(new Set([...(type ?? []), forcedType]))
+    : type
+
+  const matchedTypeIds = !effectiveType
+    ? undefined
+    : types.productTypes
+        .filter((t) => effectiveType.includes(t.value))
+        .map((t) => t.id)
+
+  // Si un type est forcé mais introuvable en base, on force une liste vide (NoResults)
+  const forceNoResults = Boolean(forcedType) && matchedTypeIds?.length === 0
+
   return (
     <div className="md:pt-47 py-26 md:pb-36">
       <CollectionsSlider />
       <RefinementList
+        title={title}
         collections={Object.fromEntries(
           collections.collections.map((c) => [c.handle, c.title])
         )}
@@ -47,10 +66,13 @@ const StoreTemplate = async ({
           categories.product_categories.map((c) => [c.handle, c.name])
         )}
         category={category}
-        types={Object.fromEntries(
-          types.productTypes.map((t) => [t.value, t.value])
-        )}
-        type={type}
+        // On masque le filtre type quand il est imposé par la page
+        types={
+          forcedType
+            ? undefined
+            : Object.fromEntries(types.productTypes.map((t) => [t.value, t.value]))
+        }
+        type={effectiveType}
         sortBy={sortBy}
       />
       <Suspense fallback={<SkeletonProductGrid />}>
@@ -73,13 +95,8 @@ const StoreTemplate = async ({
                     .filter((c) => category.includes(c.handle))
                     .map((c) => c.id)
             }
-            typeId={
-              !type
-                ? undefined
-                : types.productTypes
-                    .filter((t) => type.includes(t.value))
-                    .map((t) => t.id)
-            }
+            typeId={matchedTypeIds}
+            productsIds={forceNoResults ? [] : undefined}
           />
         )}
       </Suspense>

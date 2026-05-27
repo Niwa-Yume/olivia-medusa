@@ -43,9 +43,9 @@ export const Header: React.FC = async () => {
                 <LocalizedLink href="/">Oprocaccini</LocalizedLink>
               </h1>
               <div className="flex items-center gap-8 max-md:hidden">
-                <LocalizedLink href="/store">Vêtements</LocalizedLink>
-                <LocalizedLink href="/store">Accessoires</LocalizedLink>
-                <LocalizedLink href="/store">Bijoux</LocalizedLink>
+                <LocalizedLink href="/vetements">Vêtements</LocalizedLink>
+                <LocalizedLink href="/accessoires">Accessoires</LocalizedLink>
+                <LocalizedLink href="/bijoux">Bijoux</LocalizedLink>
                 <LocalizedLink href="/about">FAQ</LocalizedLink>
                 <LocalizedLink href="/inspiration">Contact</LocalizedLink>
               </div>

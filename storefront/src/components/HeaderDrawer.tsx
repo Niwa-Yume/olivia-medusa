@@ -55,22 +55,34 @@ export const HeaderDrawer: React.FC<{
               </div>
               <div className="text-lg flex flex-col gap-8 font-medium px-8">
                 <LocalizedLink
-                  href="/about"
+                  href="/vetements"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Vêtements
                 </LocalizedLink>
                 <LocalizedLink
+                  href="/accessoires"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Accessoires
+                </LocalizedLink>
+                <LocalizedLink
+                  href="/bijoux"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Bijoux
+                </LocalizedLink>
+                <LocalizedLink
+                  href="/about"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  FAQ
+                </LocalizedLink>
+                <LocalizedLink
                   href="/inspiration"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                Accessoires
-                </LocalizedLink>
-                <LocalizedLink
-                  href="/store"
-                  onClick={() => setIsMenuOpen(false)}
-                  >
-                  Bijoux
+                  Contact
                 </LocalizedLink>
               </div>
             </div>
