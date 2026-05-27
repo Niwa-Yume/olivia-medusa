@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: "Découvrez tous les accessoires faits main OProcaccini.",
 }
 
+const ACCESSOIRES_COLLECTIONS = ["essentiels-cuir", "details-signature"]
+const ACCESSOIRES_CATEGORIES = ["sacs", "ceintures", "foulards"]
+
 type Params = {
   searchParams: Promise<{
     sortBy?: SortOptions
@@ -28,6 +31,8 @@ export default async function AccessoiresPage({ searchParams, params }: Params) 
       countryCode={countryCode}
       title="Accessoires"
       forcedType="Accessoires"
+      allowedCollectionHandles={ACCESSOIRES_COLLECTIONS}
+      allowedCategoryHandles={ACCESSOIRES_CATEGORIES}
       collection={
         !collection
           ? undefined

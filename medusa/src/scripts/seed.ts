@@ -415,15 +415,39 @@ export default async function seedDemoData({ container }: ExecArgs) {
     input: {
       product_categories: [
         {
-          name: 'One seater',
+          name: 'Robes',
           is_active: true,
         },
         {
-          name: 'Two seater',
+          name: 'Vestes',
           is_active: true,
         },
         {
-          name: 'Three seater',
+          name: 'Ensembles',
+          is_active: true,
+        },
+        {
+          name: 'Colliers',
+          is_active: true,
+        },
+        {
+          name: 'Bracelets',
+          is_active: true,
+        },
+        {
+          name: 'Boucles',
+          is_active: true,
+        },
+        {
+          name: 'Sacs',
+          is_active: true,
+        },
+        {
+          name: 'Ceintures',
+          is_active: true,
+        },
+        {
+          name: 'Foulards',
           is_active: true,
         },
       ],
@@ -461,15 +485,21 @@ export default async function seedDemoData({ container }: ExecArgs) {
     input: {
       product_types: [
         {
-          value: 'Sofas',
+          value: 'Vêtements',
           metadata: {
             image: sofasImage,
           },
         },
         {
-          value: 'Arm Chairs',
+          value: 'Bijoux',
           metadata: {
             image: armChairsImage,
+          },
+        },
+        {
+          value: 'Accessoires',
+          metadata: {
+            image: sofasImage,
           },
         },
       ],
@@ -672,93 +702,138 @@ export default async function seedDemoData({ container }: ExecArgs) {
     input: {
       collections: [
         {
-          title: 'Scandinavian Simplicity',
-          handle: 'scandinavian-simplicity',
+          title: 'Atelier Capsule',
+          handle: 'atelier-capsule',
           metadata: {
             description:
-              'Minimalistic designs, neutral colors, and high-quality textures',
+              'Des pièces du quotidien pensées pour une allure féminine, simple et raffinée.',
             image: scandinavianSimplicityImage,
             collection_page_image: scandinavianSimplicityCollectionPageImage,
             collection_page_heading:
-              'Scandinavian Simplicity: Effortless elegance, timeless comfort',
-            collection_page_content: `Minimalistic designs, neutral colors, and high-quality textures. Perfect for those who seek comfort with a clean and understated aesthetic.
+              'Atelier Capsule : les essentiels du vestiaire revisités avec délicatesse',
+            collection_page_content: `Une collection pensée autour d’un vestiaire facile à porter, avec des coupes élégantes et des finitions soignées.
 
-This collection brings the essence of Scandinavian elegance to your living room.`,
-            product_page_heading: 'Collection Inspired Interior',
+Des créations à la fois modernes, féminines et intemporelles.`,
+            product_page_heading: 'À découvrir dans la collection',
             product_page_image: scandinavianSimplicityProductPageImage,
             product_page_wide_image: scandinavianSimplicityProductPageWideImage,
             product_page_cta_image: scandinavianSimplicityProductPageCtaImage,
             product_page_cta_heading:
-              "The 'Name of sofa' embodies Scandinavian minimalism with clean lines and a soft, neutral palette.",
+              'Une création pensée pour accompagner le quotidien avec style et simplicité.',
             product_page_cta_link:
-              'See more out of ‘Scandinavian Simplicity’ collection',
+              'Voir plus de pièces Atelier Capsule',
           },
         },
         {
-          title: 'Modern Luxe',
-          handle: 'modern-luxe',
+          title: 'Silhouettes de soirée',
+          handle: 'silhouettes-de-soiree',
           metadata: {
             description:
-              'Sophisticated and sleek, these sofas blend modern design with luxurious comfort',
+              'Des pièces habillées aux lignes affirmées pour les moments qui comptent.',
             image: modernLuxeImage,
             collection_page_image: modernLuxeCollectionPageImage,
             collection_page_heading:
-              'Modern Luxe: Where modern design meets luxurious living',
-            collection_page_content: `Sophisticated and sleek, these sofas blend modern design with luxurious comfort. Bold lines and premium materials create the ultimate statement pieces for any contemporary home.
+              'Silhouettes de soirée : l’élégance assumée, du détail à la coupe',
+            collection_page_content: `Cette collection met à l’honneur des silhouettes plus habillées, pensées pour les événements, les soirées et les moments d’exception.
 
-Elevate your space with timeless beauty.`,
-            product_page_heading: 'Collection Inspired Interior',
+Des pièces qui attirent le regard tout en restant faciles à porter.`,
+            product_page_heading: 'À découvrir dans la collection',
             product_page_image: modernLuxeProductPageImage,
             product_page_wide_image: modernLuxeProductPageWideImage,
             product_page_cta_image: modernLuxeProductPageCtaImage,
             product_page_cta_heading:
-              "The 'Name of sofa' is a masterpiece of minimalism and luxury.",
-            product_page_cta_link: 'See more out of ‘Modern Luxe’ collection',
+              'Une silhouette forte, pensée pour faire sensation avec subtilité.',
+            product_page_cta_link:
+              'Voir plus de pièces Silhouettes de soirée',
           },
         },
         {
-          title: 'Boho Chic',
-          handle: 'boho-chic',
+          title: 'Éclat doré',
+          handle: 'eclat-dore',
           metadata: {
             description:
-              'Infused with playful textures and vibrant patterns with eclectic vibes',
+              'Une sélection de bijoux lumineux, délicats et faciles à accumuler.',
             image: bohoChicImage,
             collection_page_image: bohoChicCollectionPageImage,
             collection_page_heading:
-              'Boho Chic: Relaxed, eclectic style with a touch of free-spirited charm',
-            collection_page_content: `Infused with playful textures and vibrant patterns, this collection embodies relaxed, eclectic vibes. Soft fabrics and creative designs add warmth and personality to any room.
+              'Éclat doré : des bijoux fins pour illuminer chaque tenue',
+            collection_page_content: `Une collection de bijoux pensée pour apporter de l’éclat au quotidien.
 
-It’s comfort with a bold, carefree spirit.`,
-            product_page_heading: 'Collection Inspired Interior',
+Des détails fins, des reflets lumineux et une féminité assumée.`,
+            product_page_heading: 'À découvrir dans la collection',
             product_page_image: bohoChicProductPageImage,
             product_page_wide_image: bohoChicProductPageWideImage,
             product_page_cta_image: bohoChicProductPageCtaImage,
             product_page_cta_heading:
-              "The 'Name of sofa' captures the essence of boho style with its relaxed, oversized form and eclectic fabric choices.",
-            product_page_cta_link: 'See more out of ‘Boho Chic’ collection',
+              'Un bijou délicat qui complète la silhouette sans jamais la surcharger.',
+            product_page_cta_link: 'Voir plus de bijoux Éclat doré',
           },
         },
         {
-          title: 'Timeless Classics',
-          handle: 'timeless-classics',
+          title: 'Atelier pierres',
+          handle: 'atelier-pierres',
           metadata: {
             description:
-              'Elegant shapes and rich textures, traditional craftsmanship with modern comfort',
+              'Des bijoux de caractère, travaillés comme de petites pièces signatures.',
             image: timelessClassicsImage,
             collection_page_image: timelessClassicsCollectionPageImage,
             collection_page_heading:
-              'Timeless Classics: Enduring style, crafted for comfort and lasting beauty',
-            collection_page_content: `Designed for those who appreciate enduring style, this collection features elegant shapes and rich textures. These sofas combine traditional craftsmanship with modern comfort.
+              'Atelier pierres : des bijoux texturés, pensés comme des pièces fortes',
+            collection_page_content: `Des bijoux qui jouent avec les volumes, les textures et les détails pour signer un look.
 
-Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
-            product_page_heading: 'Collection Inspired Interior',
+Une collection plus expressive, idéale pour composer une allure unique.`,
+            product_page_heading: 'À découvrir dans la collection',
             product_page_image: timelessClassicsProductPageImage,
             product_page_wide_image: timelessClassicsProductPageWideImage,
             product_page_cta_image: timelessClassicsProductPageCtaImage,
             product_page_cta_heading:
-              "The 'Name of sofa' brings a touch of traditional charm with its elegant curves and classic silhouette",
+              'Une pièce qui attire le regard et vient signer la tenue avec personnalité.',
+            product_page_cta_link: 'Voir plus de bijoux Atelier pierres',
+          },
+        },
+        {
+          title: 'Essentiels cuir',
+          handle: 'essentiels-cuir',
+          metadata: {
+            description:
+              'Des accessoires pensés pour accompagner les silhouettes avec justesse.',
+            image: modernLuxeImage,
+            collection_page_image: modernLuxeCollectionPageImage,
+            collection_page_heading:
+              'Essentiels cuir : les accessoires du quotidien, revisités avec caractère',
+            collection_page_content: `Une collection d’accessoires utiles et élégants, pensée pour compléter les looks de tous les jours.
+
+Des pièces simples, efficaces et faciles à associer.`,
+            product_page_heading: 'À découvrir dans la collection',
+            product_page_image: modernLuxeProductPageImage,
+            product_page_wide_image: modernLuxeProductPageWideImage,
+            product_page_cta_image: modernLuxeProductPageCtaImage,
+            product_page_cta_heading:
+              'Un accessoire bien choisi suffit à structurer toute une silhouette.',
+            product_page_cta_link: 'Voir plus de pièces Essentiels cuir',
+          },
+        },
+        {
+          title: 'Détails signature',
+          handle: 'details-signature',
+          metadata: {
+            description:
+              'Des accessoires expressifs, créés pour apporter une touche finale forte.',
+            image: scandinavianSimplicityImage,
+            collection_page_image: scandinavianSimplicityCollectionPageImage,
+            collection_page_heading:
+              'Détails signature : les finitions qui donnent du relief à un look',
+            collection_page_content: `Des accessoires pensés comme des détails de style à part entière.
+
+La touche finale idéale pour personnaliser une silhouette avec élégance.`,
+            product_page_heading: 'À découvrir dans la collection',
+            product_page_image: scandinavianSimplicityProductPageImage,
+            product_page_wide_image: scandinavianSimplicityProductPageWideImage,
+            product_page_cta_image: scandinavianSimplicityProductPageCtaImage,
+            product_page_cta_heading:
+              'Une pièce de finition imaginée pour souligner le style sans l’alourdir.',
             product_page_cta_link:
-              'See more out of ‘Timeless Classics’ collection',
+              'Voir plus de pièces Détails signature',
           },
         },
       ],
@@ -901,10 +976,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Astrid Curve combines flowing curves and cozy, textured fabric for a truly bohemian vibe. Its relaxed design adds character and comfort, perfect for eclectic living spaces with a free-spirited charm.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Three seater').id,
+            categoryResult.find((cat) => cat.name === 'Robes').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'boho-chic').id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          collection_id: collections.find(
+            (c) => c.handle === 'silhouettes-de-soiree',
+          ).id,
+          type_id: productTypes.find((pt) => pt.value === 'Vêtements').id,
           status: ProductStatus.PUBLISHED,
           images: astridCurveImages,
           options: [
@@ -1001,12 +1078,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Belime Estate exudes classic sophistication with its tufted back and rich fabric. Its luxurious look and enduring comfort make it a perfect fit for traditional, elegant interiors.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Two seater').id,
+            categoryResult.find((cat) => cat.name === 'Vestes').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'timeless-classics',
+            (c) => c.handle === 'atelier-capsule',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          type_id: productTypes.find((pt) => pt.value === 'Vêtements').id,
           status: ProductStatus.PUBLISHED,
           images: belimeEstateImages,
           options: [
@@ -1122,12 +1199,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Cypress Retreat is a nod to traditional design with its elegant lines and durable, high-quality upholstery. A timeless choice, it offers long-lasting comfort and a refined aesthetic for any home.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Three seater').id,
+            categoryResult.find((cat) => cat.name === 'Vestes').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'timeless-classics',
+            (c) => c.handle === 'atelier-capsule',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          type_id: productTypes.find((pt) => pt.value === 'Vêtements').id,
           status: ProductStatus.PUBLISHED,
           images: cypressRetreatImages,
           options: [
@@ -1224,10 +1301,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Everly Estate offers a blend of modern elegance and plush luxury, with its sleek lines and soft velvet upholstery. Perfect for upscale interiors, it exudes sophistication and comfort in equal measure.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Two seater').id,
+            categoryResult.find((cat) => cat.name === 'Robes').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'modern-luxe').id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          collection_id: collections.find(
+            (c) => c.handle === 'silhouettes-de-soiree',
+          ).id,
+          type_id: productTypes.find((pt) => pt.value === 'Vêtements').id,
           status: ProductStatus.PUBLISHED,
           images: everlyEstateImages,
           options: [
@@ -1324,12 +1403,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Havenhill Estate brings a touch of traditional charm with its elegant curves and classic silhouette. Upholstered in durable, luxurious fabric, it’s a timeless piece that combines comfort and style, fitting seamlessly into any sophisticated home.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'One seater').id,
+            categoryResult.find((cat) => cat.name === 'Sacs').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'timeless-classics',
+            (c) => c.handle === 'essentiels-cuir',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Arm Chairs').id,
+          type_id: productTypes.find((pt) => pt.value === 'Accessoires').id,
           status: ProductStatus.PUBLISHED,
           images: havenhillEstateImages,
           options: [
@@ -1426,10 +1505,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Monaco Flair combines sleek metallic accents with rich fabric, delivering a bold, luxurious statement. Its minimalist design and deep seating make it a standout piece for modern living rooms.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Three seater').id,
+            categoryResult.find((cat) => cat.name === 'Ensembles').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'modern-luxe').id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          collection_id: collections.find(
+            (c) => c.handle === 'silhouettes-de-soiree',
+          ).id,
+          type_id: productTypes.find((pt) => pt.value === 'Vêtements').id,
           status: ProductStatus.PUBLISHED,
           images: monacoFlairImages,
           options: [
@@ -1545,12 +1626,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Nordic Breeze is a refined expression of Scandinavian minimalism, with its crisp silhouette and airy aesthetic. Crafted for both comfort and simplicity, it’s perfect for creating a serene living space.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'One seater').id,
+            categoryResult.find((cat) => cat.name === 'Colliers').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'scandinavian-simplicity',
+            (c) => c.handle === 'eclat-dore',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Arm Chairs').id,
+          type_id: productTypes.find((pt) => pt.value === 'Bijoux').id,
           status: ProductStatus.PUBLISHED,
           images: nordicBreezeImages,
           options: [
@@ -1666,12 +1747,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Nordic Haven features clean lines and soft textures, embodying the essence of Scandinavian design. Its natural tones and minimalist frame bring effortless serenity and comfort to any home.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Three seater').id,
+            categoryResult.find((cat) => cat.name === 'Ceintures').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'scandinavian-simplicity',
+            (c) => c.handle === 'details-signature',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          type_id: productTypes.find((pt) => pt.value === 'Accessoires').id,
           status: ProductStatus.PUBLISHED,
           images: nordicHavenImages,
           options: [
@@ -1787,12 +1868,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Oslo Drift is designed for ultimate relaxation, with soft, supportive cushions and a sleek, modern frame. Its understated elegance and neutral tones make it an ideal fit for contemporary, minimalist homes.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Two seater').id,
+            categoryResult.find((cat) => cat.name === 'Ceintures').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'scandinavian-simplicity',
+            (c) => c.handle === 'details-signature',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          type_id: productTypes.find((pt) => pt.value === 'Accessoires').id,
           status: ProductStatus.PUBLISHED,
           images: osloDriftImages,
           options: [
@@ -1908,12 +1989,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Oslo Serenity embodies Scandinavian minimalism with clean lines and a soft, neutral palette. Its tailored silhouette and plush cushions deliver a balance of simplicity and comfort, making it perfect for those who value understated elegance.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Two seater').id,
+            categoryResult.find((cat) => cat.name === 'Bracelets').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'scandinavian-simplicity',
+            (c) => c.handle === 'atelier-pierres',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          type_id: productTypes.find((pt) => pt.value === 'Bijoux').id,
           status: ProductStatus.PUBLISHED,
           images: osloSerenityImages,
           options: [
@@ -2010,10 +2091,10 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'Minimalistic designs, neutral colors, and high-quality textures. Perfect for those who seek comfort with a clean and understated aesthetic. This collection brings the essence of Scandinavian elegance to your living room.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'One seater').id,
+            categoryResult.find((cat) => cat.name === 'Boucles').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'modern-luxe').id,
-          type_id: productTypes.find((pt) => pt.value === 'Arm Chairs').id,
+          collection_id: collections.find((c) => c.handle === 'eclat-dore').id,
+          type_id: productTypes.find((pt) => pt.value === 'Bijoux').id,
           status: ProductStatus.PUBLISHED,
           images: palomaHavenImages,
           options: [
@@ -2129,10 +2210,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Savannah Grove captures the essence of boho style with its relaxed, oversized form and eclectic fabric choices. Designed for both comfort and personality, it’s the ideal piece for those who seek a cozy, free-spirited vibe in their living spaces.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'One seater').id,
+            categoryResult.find((cat) => cat.name === 'Foulards').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'boho-chic').id,
-          type_id: productTypes.find((pt) => pt.value === 'Arm Chairs').id,
+          collection_id: collections.find(
+            (c) => c.handle === 'details-signature',
+          ).id,
+          type_id: productTypes.find((pt) => pt.value === 'Accessoires').id,
           status: ProductStatus.PUBLISHED,
           images: savannahGroveImages,
           options: [
@@ -2248,12 +2331,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Serena Meadow combines a classic silhouette with modern comfort, offering a relaxed yet polished look. Its soft upholstery and subtle curves bring a timeless elegance to any living room.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Two seater').id,
+            categoryResult.find((cat) => cat.name === 'Ensembles').id,
           ],
           collection_id: collections.find(
-            (c) => c.handle === 'timeless-classics',
+            (c) => c.handle === 'atelier-capsule',
           ).id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          type_id: productTypes.find((pt) => pt.value === 'Vêtements').id,
           status: ProductStatus.PUBLISHED,
           images: serenaMeadowImages,
           options: [
@@ -2369,10 +2452,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Sutton Royale blends eclectic design with classic bohemian comfort, featuring soft, tufted fabric and a wide, welcoming frame. Its unique style adds a touch of vintage flair to any space.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Two seater').id,
+            categoryResult.find((cat) => cat.name === 'Colliers').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'boho-chic').id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          collection_id: collections.find(
+            (c) => c.handle === 'atelier-pierres',
+          ).id,
+          type_id: productTypes.find((pt) => pt.value === 'Bijoux').id,
           status: ProductStatus.PUBLISHED,
           images: suttonRoyaleImages,
           options: [
@@ -2469,10 +2554,12 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Velar Loft offers a refined blend of modern design and opulent comfort. Upholstered in rich fabric with sleek metallic accents, this sofa delivers both luxury and a contemporary edge, making it a striking centerpiece for sophisticated interiors.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'One seater').id,
+            categoryResult.find((cat) => cat.name === 'Sacs').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'modern-luxe').id,
-          type_id: productTypes.find((pt) => pt.value === 'Arm Chairs').id,
+          collection_id: collections.find(
+            (c) => c.handle === 'essentiels-cuir',
+          ).id,
+          type_id: productTypes.find((pt) => pt.value === 'Accessoires').id,
           status: ProductStatus.PUBLISHED,
           images: velarLoftImages,
           options: [
@@ -2569,10 +2656,10 @@ Perfect for creating a warm, inviting atmosphere that never goes out of style.`,
           description:
             'The Velora Luxe brings a touch of luxury to bohemian design with its bold patterns and plush comfort. Its oversized shape and inviting cushions make it an ideal centerpiece for laid-back, stylish interiors.',
           category_ids: [
-            categoryResult.find((cat) => cat.name === 'Three seater').id,
+            categoryResult.find((cat) => cat.name === 'Bracelets').id,
           ],
-          collection_id: collections.find((c) => c.handle === 'boho-chic').id,
-          type_id: productTypes.find((pt) => pt.value === 'Sofas').id,
+          collection_id: collections.find((c) => c.handle === 'eclat-dore').id,
+          type_id: productTypes.find((pt) => pt.value === 'Bijoux').id,
           status: ProductStatus.PUBLISHED,
           images: veloraLuxeImages,
           options: [

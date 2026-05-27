@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: "Découvrez tous les bijoux faits main OProcaccini.",
 }
 
+const BIJOUX_COLLECTIONS = ["eclat-dore", "atelier-pierres"]
+const BIJOUX_CATEGORIES = ["colliers", "bracelets", "boucles"]
+
 type Params = {
   searchParams: Promise<{
     sortBy?: SortOptions
@@ -28,6 +31,8 @@ export default async function BijouxPage({ searchParams, params }: Params) {
       countryCode={countryCode}
       title="Bijoux"
       forcedType="Bijoux"
+      allowedCollectionHandles={BIJOUX_COLLECTIONS}
+      allowedCategoryHandles={BIJOUX_CATEGORIES}
       collection={
         !collection
           ? undefined

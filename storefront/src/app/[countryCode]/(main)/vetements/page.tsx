@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: "Découvrez toutes les créations vestimentaires OProcaccini.",
 }
 
+const VETEMENTS_COLLECTIONS = ["atelier-capsule", "silhouettes-de-soiree"]
+const VETEMENTS_CATEGORIES = ["robes", "vestes", "ensembles"]
+
 type Params = {
   searchParams: Promise<{
     sortBy?: SortOptions
@@ -28,6 +31,8 @@ export default async function VetementsPage({ searchParams, params }: Params) {
       countryCode={countryCode}
       title="Vêtements"
       forcedType="Vêtements"
+      allowedCollectionHandles={VETEMENTS_COLLECTIONS}
+      allowedCategoryHandles={VETEMENTS_CATEGORIES}
       collection={
         !collection
           ? undefined

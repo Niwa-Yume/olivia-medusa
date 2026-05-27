@@ -11,6 +11,12 @@ import { getProductTypesList } from "@lib/data/product-types"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import { getRegion } from "@lib/data/regions"
 
+const normalizeLabel = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+
 const StoreTemplate = async ({
   sortBy,
   collection,
@@ -20,6 +26,8 @@ const StoreTemplate = async ({
   countryCode,
   title,
   forcedType,
+  allowedCollectionHandles,
+  allowedCategoryHandles,
 }: {
   sortBy?: SortOptions
   collection?: string[]
@@ -29,6 +37,8 @@ const StoreTemplate = async ({
   countryCode: string
   title?: string
   forcedType?: string
+  allowedCollectionHandles?: string[]
+  allowedCategoryHandles?: string[]
 }) => {
   const pageNumber = page ? parseInt(page, 10) : 1
 
@@ -47,25 +57,57 @@ const StoreTemplate = async ({
   const matchedTypeIds = !effectiveType
     ? undefined
     : types.productTypes
-        .filter((t) => effectiveType.includes(t.value))
+        .filter((t) =>
+          effectiveType
+            .map((value) => normalizeLabel(value))
+            .includes(normalizeLabel(t.value))
+        )
         .map((t) => t.id)
 
-  // Si un type est forcé mais introuvable en base, on force une liste vide (NoResults)
-  const forceNoResults = Boolean(forcedType) && matchedTypeIds?.length === 0
+  const filteredCollections = allowedCollectionHandles
+    ? collections.collections.filter((c) => allowedCollectionHandles.includes(c.handle))
+    : collections.collections
+
+  const visibleCollections = filteredCollections.length
+    ? filteredCollections
+    : collections.collections
+
+  const filteredCategories = allowedCategoryHandles
+    ? categories.product_categories.filter((c) =>
+        allowedCategoryHandles.includes(c.handle)
+      )
+    : categories.product_categories
+
+  const visibleCategories = filteredCategories.length
+    ? filteredCategories
+    : categories.product_categories
+
+  const effectiveCollection = collection?.filter((handle) =>
+    visibleCollections.some((c) => c.handle === handle)
+  )
+
+  const effectiveCategory = category?.filter((handle) =>
+    visibleCategories.some((c) => c.handle === handle)
+  )
+
+  // Fallback: si le type forcé n'existe pas encore en DB, on n'applique pas le filtre type
+  const effectiveTypeIds = matchedTypeIds?.length ? matchedTypeIds : undefined
 
   return (
     <div className="md:pt-47 py-26 md:pb-36">
-      <CollectionsSlider />
+      <CollectionsSlider
+        handles={filteredCollections.length ? allowedCollectionHandles : undefined}
+      />
       <RefinementList
         title={title}
         collections={Object.fromEntries(
-          collections.collections.map((c) => [c.handle, c.title])
+          visibleCollections.map((c) => [c.handle, c.title])
         )}
-        collection={collection}
+        collection={effectiveCollection}
         categories={Object.fromEntries(
-          categories.product_categories.map((c) => [c.handle, c.name])
+          visibleCategories.map((c) => [c.handle, c.name])
         )}
-        category={category}
+        category={effectiveCategory}
         // On masque le filtre type quand il est imposé par la page
         types={
           forcedType
@@ -82,21 +124,20 @@ const StoreTemplate = async ({
             page={pageNumber}
             countryCode={countryCode}
             collectionId={
-              !collection
+              !effectiveCollection
                 ? undefined
-                : collections.collections
-                    .filter((c) => collection.includes(c.handle))
+                : visibleCollections
+                    .filter((c) => effectiveCollection.includes(c.handle))
                     .map((c) => c.id)
             }
             categoryId={
-              !category
+              !effectiveCategory
                 ? undefined
-                : categories.product_categories
-                    .filter((c) => category.includes(c.handle))
+                : visibleCategories
+                    .filter((c) => effectiveCategory.includes(c.handle))
                     .map((c) => c.id)
             }
-            typeId={matchedTypeIds}
-            productsIds={forceNoResults ? [] : undefined}
+            typeId={effectiveTypeIds}
           />
         )}
       </Suspense>

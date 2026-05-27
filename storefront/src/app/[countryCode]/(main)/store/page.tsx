@@ -1,7 +1,7 @@
 import { Metadata } from "next"
+import { redirect } from "next/navigation"
 
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
-import StoreTemplate from "@modules/store/templates"
 
 export const metadata: Metadata = {
   title: "Store",
@@ -25,22 +25,22 @@ export default async function StorePage({ searchParams, params }: Params) {
   const { countryCode } = await params
   const { sortBy, page, collection, category, type } = await searchParams
 
-  return (
-    <StoreTemplate
-      sortBy={sortBy}
-      page={page}
-      countryCode={countryCode}
-      collection={
-        !collection
-          ? undefined
-          : Array.isArray(collection)
-            ? collection
-            : [collection]
-      }
-      category={
-        !category ? undefined : Array.isArray(category) ? category : [category]
-      }
-      type={!type ? undefined : Array.isArray(type) ? type : [type]}
-    />
-  )
+  const query = new URLSearchParams()
+  if (sortBy) query.set("sortBy", sortBy)
+  if (page) query.set("page", page)
+  if (collection) {
+    const values = Array.isArray(collection) ? collection : [collection]
+    values.forEach((value) => query.append("collection", value))
+  }
+  if (category) {
+    const values = Array.isArray(category) ? category : [category]
+    values.forEach((value) => query.append("category", value))
+  }
+  if (type) {
+    const values = Array.isArray(type) ? type : [type]
+    values.forEach((value) => query.append("type", value))
+  }
+
+  const queryString = query.toString()
+  redirect(`/${countryCode}/vetements${queryString ? `?${queryString}` : ""}`)
 }

@@ -9,7 +9,8 @@ import { twMerge } from "tailwind-merge"
 export const CollectionsSlider: React.FC<{
   heading?: React.ReactNode
   className?: string
-}> = async ({ heading = "Collections", className }) => {
+  handles?: string[]
+}> = async ({ heading = "Collections", className, handles }) => {
   const collections = await getCollectionsList(0, 20, [
     "id",
     "title",
@@ -17,7 +18,13 @@ export const CollectionsSlider: React.FC<{
     "metadata",
   ])
 
-  if (!collections || !collections.collections.length) {
+  const visibleCollections = handles
+    ? collections.collections.filter((collection) =>
+        handles.includes(collection.handle)
+      )
+    : collections.collections
+
+  if (!collections || !visibleCollections.length) {
     return null
   }
 
@@ -26,7 +33,7 @@ export const CollectionsSlider: React.FC<{
       heading={<h3 className="text-md md:text-2xl">{heading}</h3>}
       className={twMerge("mb-26 md:mb-36", className)}
     >
-      {collections.collections.map((c) => (
+      {visibleCollections.map((c) => (
         <div
           key={c.id}
           className="w-[70%] sm:w-[60%] lg:w-full max-w-72 flex-shrink-0"
