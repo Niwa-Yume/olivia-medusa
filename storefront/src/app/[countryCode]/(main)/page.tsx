@@ -1,56 +1,75 @@
 import { Metadata } from "next"
-import Image from "next/image"
+import { HttpTypes } from "@medusajs/types"
 import { getRegion } from "@lib/data/regions"
-// import { getProductTypesList } from "@lib/data/product-types"
-import { Layout, LayoutColumn } from "@/components/Layout"
-// import { LocalizedLink } from "@/components/LocalizedLink"
-import { CollectionsSection } from "@/components/CollectionsSection"
+import { getProductsList } from "@lib/data/products"
+import { getProductPrice } from "@lib/util/get-product-price"
+import { LocalizedLink } from "@/components/LocalizedLink"
+import Thumbnail from "@modules/products/components/thumbnail"
 
 export const metadata: Metadata = {
-  title: "Medusa Next.js Starter Template",
-  description:
-    "A performant frontend ecommerce starter template with Next.js 14 and Medusa.",
+  title: "OProcaccini",
+  description: "Pièces uniques cousues main à Genève.",
 }
 
-// const ProductTypesSection: React.FC = async () => {
-//   const productTypes = await getProductTypesList(0, 20, [
-//     "id",
-//     "value",
-//     "metadata",
-//   ])
+const categories = [
+  {
+    title: "Vêtements",
+    subtitle: "Robes · Vestes · Ensembles",
+    href: "/vetements",
+    emoji: "👗",
+  },
+  {
+    title: "Accessoires",
+    subtitle: "Sacs · Ceintures · Foulards",
+    href: "/accessoires",
+    emoji: "👜",
+  },
+  {
+    title: "Bijoux",
+    subtitle: "Colliers · Bracelets · Boucles",
+    href: "/bijoux",
+    emoji: "💍",
+  },
+] as const
 
-//   if (!productTypes) {
-//     return null
-//   }
+const faqPreview = [
+  {
+    question: "Puis-je vous contacter pour des questions ?",
+    answer: "Oui, par e-mail et sur les réseaux sociaux 💌",
+  },
+  {
+    question: "Les articles sont-ils échangeables ?",
+    answer: "Non, ce sont des éditions limitées, donc uniques.",
+  },
+  {
+    question: "Comment entretenir les vêtements ?",
+    answer: "Lavage 30°C et repassage doux avec tissu de protection.",
+  },
+] as const
 
-//   return (
-//     <Layout className="mb-26 md:mb-36 max-md:gap-x-2">
-//       {productTypes.productTypes.map((productType, index) => (
-//         <LayoutColumn
-//           key={productType.id}
-//           start={index % 2 === 0 ? 1 : 7}
-//           end={index % 2 === 0 ? 7 : 13}
-//         >
-//           <LocalizedLink href={`/store?type=${productType.value}`}>
-//             {typeof productType.metadata?.image === "object" &&
-//               productType.metadata.image &&
-//               "url" in productType.metadata.image &&
-//               typeof productType.metadata.image.url === "string" && (
-//                 <Image
-//                   src={productType.metadata.image.url}
-//                   width={1200}
-//                   height={900}
-//                   alt={productType.value}
-//                   className="mb-2 md:mb-8"
-//                 />
-//               )}
-//             <p className="text-xs md:text-md">{productType.value}</p>
-//           </LocalizedLink>
-//         </LayoutColumn>
-//       ))}
-//     </Layout>
-//   )
-// }
+function ProductCard({ product }: { product: HttpTypes.StoreProduct }) {
+  const { cheapestPrice } = getProductPrice({ product })
+
+  return (
+    <LocalizedLink
+      href={`/products/${product.handle}`}
+      className="group rounded-2xl p-3 md:p-4 border border-black/10 bg-white/70 transition-transform hover:-translate-y-1"
+    >
+      <Thumbnail
+        thumbnail={product.thumbnail}
+        images={product.images}
+        size="3/4"
+        className="rounded-xl mb-3"
+      />
+      <p className="text-sm font-semibold mb-1" style={{ color: "var(--color-text)" }}>
+        {product.title}
+      </p>
+      <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+        {cheapestPrice?.calculated_price ?? "Prix sur demande"}
+      </p>
+    </LocalizedLink>
+  )
+}
 
 export default async function Home({
   params,
@@ -64,59 +83,188 @@ export default async function Home({
     return null
   }
 
+  const {
+    response: { products },
+  } = await getProductsList({
+    countryCode,
+    queryParams: {
+      limit: 4,
+      fields: "*variants.calculated_price,+collection.title",
+      order: "-created_at",
+    },
+  })
+
   return (
-    <>
-      <div className="max-md:pt-18">
-        <Image
-          src="/images/content/living-room-gray-armchair-two-seater-sofa.png"
-          width={2880}
-          height={1500}
-          alt="Living room with gray armchair and two-seater sofa"
-          className="md:h-screen md:object-cover"
-        />
+    <div className="pt-18 md:pt-21">
+      <div className="bg-brand-salmon text-center px-4 py-2 text-xs tracking-[0.18em] uppercase">
+        🌿 Cousu main à Genève · Éditions limitées · Livraison Suisse
       </div>
-      <div className="pt-8 pb-26 md:pt-26 md:pb-36">
-        <CollectionsSection className="mb-22 md:mb-36" />
-        <Layout>
-          <LayoutColumn className="col-span-full">
-            <h3 className="text-md md:text-2xl mb-8 md:mb-16">
-              Qui suis-je ?
-            </h3>
-          </LayoutColumn>
-          <LayoutColumn start={1} end={{ base: 13, md: 7 }}>
-            <h2 className="text-md md:text-2xl">
-              La créativité! Une aventure en ligne entre vous et moi
-            </h2>
-            <Image
-          src="/images/content/Olivia-whoami.jpg"
-          width={390}
-          height={700}
-          alt="Olivia whoami"
-          className="rounded-full md:object-cover ml-15 mt-5"
-        />
-          </LayoutColumn>
-          <LayoutColumn
-            start={{ base: 1, md: 8 }}
-            end={13}
-            className="mt-6 md:mt-19"
-          >
-            <div  className="mt-6 md:text-md">
-              <p className="mb-5 md:mb-9">
-                Une jeune fille née à Genève se révélant très créative, demanda pour son 12ème anniversaire une machine à coudre.
-              </p>
-              <p className="mb-5 md:mb-3">
-                Ce fut le début de mon incroyable aventure.
-Avec le soutien de mes parents, j’ai entrepris des études de « Haute Couture » Coupe-Couture section femme; Modéliste et Coupe-Couture section homme, ce sont les trois diplômes que j’ai obtenu durant mes cinq années d’études.
-              </p>
-              <p className="mb-5 md:mb-3">
-                Mon entourage et mes amis qui ont participé à mes défilés et vu mes créations, m’ont vivement encouragé à créer ma propre marque de vêtements « OProcaccini ».
-La mode étant ma passion, je souhaite la partager avec toutes et tous les passionnés comme moi.
-Ma boutique de vente en ligne vous permettra de visualiser et d’accéder à toutes mes créations, allant du Vêtement Haute Couture, passant par tous types d’Accessoires et Bijoux faits main. 
+
+      <section className="relative overflow-hidden bg-brand-mint px-4 py-16 md:py-24">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+          <p className="text-[30vw] leading-none font-serif italic text-black/10">OP</p>
+        </div>
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <p className="text-xs md:text-sm uppercase tracking-[0.25em] mb-6" style={{ color: "var(--color-text-muted)" }}>
+            ✨ Cousu main · Genève
+          </p>
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif italic leading-tight mb-6" style={{ color: "var(--color-text)" }}>
+            Pièces uniques pour un style <span className="not-italic">qui vous ressemble</span>
+          </h1>
+          <p className="max-w-2xl mx-auto text-sm md:text-base mb-8" style={{ color: "var(--color-text-muted)" }}>
+            Des créations haute couture en éditions limitées, pensées et assemblées avec soin. Chaque pièce porte une histoire, la vôtre.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <LocalizedLink href="/vetements" className="px-6 py-3 rounded-full bg-black text-white text-xs uppercase tracking-[0.08em]">
+              🛍 Voir la boutique
+            </LocalizedLink>
+            <LocalizedLink href="/about" className="px-6 py-3 rounded-full border border-black text-xs uppercase tracking-[0.08em]">
+              📖 Notre histoire
+            </LocalizedLink>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-y border-black/10">
+        {[
+          { emoji: "🧵", title: "Cousu main", body: "Chaque pièce à la main" },
+          { emoji: "✨", title: "Éditions limitées", body: "Petites séries uniques" },
+          { emoji: "🇨🇭", title: "Made in Switzerland", body: "Créé à Genève" },
+          { emoji: "📦", title: "Livraison soignée", body: "Expédition en Suisse" },
+        ].map((item) => (
+          <div key={item.title} className="flex gap-3 px-6 py-5 border-r last:border-r-0 border-black/10 bg-brand-salmon/60">
+            <span className="text-xl">{item.emoji}</span>
+            <div>
+              <p className="text-xs uppercase tracking-[0.08em] font-semibold">{item.title}</p>
+              <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
+                {item.body}
               </p>
             </div>
-          </LayoutColumn>
-        </Layout>
-      </div>
-    </>
+          </div>
+        ))}
+      </section>
+
+      <section className="px-4 py-14 md:py-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 md:mb-14">
+            <p className="inline-block text-xs uppercase tracking-[0.2em] rounded-full px-4 py-2 bg-brand-mint mb-4">
+              Nos catégories
+            </p>
+            <h2 className="text-2xl md:text-4xl font-serif italic">Explorez nos créations</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {categories.map((category) => (
+              <LocalizedLink
+                key={category.href}
+                href={category.href}
+                className="rounded-3xl border border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
+              >
+                <div className="h-40 flex items-center justify-center text-6xl bg-brand-mint/70">
+                  {category.emoji}
+                </div>
+                <div className="px-6 py-5">
+                  <p className="text-xl font-serif italic mb-1">{category.title}</p>
+                  <p className="text-xs uppercase tracking-[0.08em]" style={{ color: "var(--color-text-muted)" }}>
+                    {category.subtitle}
+                  </p>
+                </div>
+              </LocalizedLink>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-14 md:pb-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="inline-block text-xs uppercase tracking-[0.2em] rounded-full px-4 py-2 bg-brand-salmon mb-4">
+              Dernières pièces
+            </p>
+            <h2 className="text-2xl md:text-4xl font-serif italic">Nouveautés</h2>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+          <div className="text-center mt-8">
+            <LocalizedLink href="/vetements" className="inline-flex rounded-full border border-black px-6 py-3 text-xs uppercase tracking-[0.1em]">
+              Voir toute la boutique →
+            </LocalizedLink>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-14 md:pb-20">
+        <div className="max-w-6xl mx-auto rounded-3xl bg-[#3B1A1C] p-6 md:p-10 grid md:grid-cols-2 gap-8">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] mb-3 text-brand-mint">L&apos;atelier d&apos;Olivia</p>
+            <h2 className="text-2xl md:text-4xl font-serif italic text-white mb-4">Haute couture cousue avec amour</h2>
+            <p className="text-sm md:text-base text-white/70 mb-6">
+              Chaque pièce naît dans mon atelier genevois : sélection des matières, patronage, coupe et finitions minutieuses.
+            </p>
+            <LocalizedLink href="/inspiration" className="inline-flex rounded-full bg-brand-salmon px-6 py-3 text-xs uppercase tracking-[0.1em]">
+              ✨ Découvrir l&apos;histoire
+            </LocalizedLink>
+          </div>
+          <div className="space-y-3">
+            {[
+              { emoji: "🧵", title: "Fait main", body: "Des finitions précises et soignées." },
+              { emoji: "✨", title: "Édition limitée", body: "Des créations rares, en petite série." },
+              { emoji: "🇨🇭", title: "Savoir-faire suisse", body: "Conçu et fabriqué à Genève." },
+            ].map((value) => (
+              <div key={value.title} className="rounded-2xl bg-white/10 p-4 flex gap-4">
+                <span className="text-2xl">{value.emoji}</span>
+                <div>
+                  <p className="text-sm font-semibold text-white">{value.title}</p>
+                  <p className="text-xs text-white/70">{value.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-4 pb-16 md:pb-24">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-4xl font-serif italic mb-8">Questions fréquentes</h2>
+          <div className="space-y-3">
+            {faqPreview.map((item) => (
+              <div key={item.question} className="rounded-2xl border border-black/10 bg-brand-mint/60 p-5">
+                <p className="text-sm font-semibold mb-2">{item.question}</p>
+                <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
+                  {item.answer}
+                </p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 text-center">
+            <LocalizedLink href="/about" className="inline-flex rounded-full border border-black px-6 py-3 text-xs uppercase tracking-[0.1em]">
+              Voir toute la FAQ
+            </LocalizedLink>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-brand-mint/70 px-4 py-12 text-center">
+        <h2 className="text-2xl md:text-3xl font-serif italic mb-2">Suivez les créations</h2>
+        <p className="text-sm mb-6" style={{ color: "var(--color-text-muted)" }}>
+          @creations.procaccini
+        </p>
+        <div className="max-w-2xl mx-auto grid grid-cols-5 gap-3 text-2xl">
+          {[
+            "🌸",
+            "🧵",
+            "✨",
+            "👗",
+            "💛",
+          ].map((emoji) => (
+            <div key={emoji} className="aspect-square rounded-xl bg-white/70 flex items-center justify-center">
+              {emoji}
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
   )
 }
