@@ -32,20 +32,6 @@ const categories = [
   },
 ] as const
 
-const faqPreview = [
-  {
-    question: "Puis-je vous contacter pour des questions ?",
-    answer: "Oui, par e-mail et sur les réseaux sociaux 💌",
-  },
-  {
-    question: "Les articles sont-ils échangeables ?",
-    answer: "Non, ce sont des éditions limitées, donc uniques.",
-  },
-  {
-    question: "Comment entretenir les vêtements ?",
-    answer: "Lavage 30°C et repassage doux avec tissu de protection.",
-  },
-] as const
 
 function ProductCard({ product }: { product: HttpTypes.StoreProduct }) {
   const { cheapestPrice } = getProductPrice({ product })
