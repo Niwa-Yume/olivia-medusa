@@ -47,7 +47,7 @@ export const Header: React.FC = async () => {
                 <LocalizedLink href="/accessoires">Accessoires</LocalizedLink>
                 <LocalizedLink href="/bijoux">Bijoux</LocalizedLink>
                 <LocalizedLink href="/about">FAQ</LocalizedLink>
-                <LocalizedLink href="/inspiration">Contact</LocalizedLink>
+                <LocalizedLink href="/contact">Contact</LocalizedLink>
               </div>
               <div className="flex items-center gap-3 lg:gap-6 max-md:hidden">
                 <CartDrawer />

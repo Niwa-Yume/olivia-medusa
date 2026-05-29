@@ -157,9 +157,9 @@ export default async function Home({
               <LocalizedLink
                 key={category.href}
                 href={category.href}
-                className="rounded-3xl border border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
+                className="rounded-3xl rounded-md border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
               >
-                <div className="h-40 flex items-center justify-center text-6xl bg-brand-mint/70">
+                <div className="h-40 flex items-center justify-center text-6xl bg-brand-mint/70 rounded-sm">
                   {category.emoji}
                 </div>
                 <div className="px-6 py-5">
@@ -196,7 +196,7 @@ export default async function Home({
       </section>
 
       <section className="px-4 pb-14 md:pb-20">
-        <div className="max-w-6xl mx-auto rounded-3xl bg-[#3B1A1C] p-6 md:p-10 grid md:grid-cols-2 gap-8">
+        <div className="max-w-6xl mx-auto rounded-3xl bg-[#3B1A1C] p-6 md:p-10 grid md:grid-cols-2 gap-8 rounded-md">
           <div>
             <p className="text-xs uppercase tracking-[0.2em] mb-3 text-brand-mint">L&apos;atelier d&apos;Olivia</p>
             <h2 className="text-2xl md:text-4xl font-serif italic text-white mb-4">Haute couture cousue avec amour</h2>
@@ -225,46 +225,6 @@ export default async function Home({
         </div>
       </section>
 
-      <section className="px-4 pb-16 md:pb-24">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-2xl md:text-4xl font-serif italic mb-8">Questions fréquentes</h2>
-          <div className="space-y-3">
-            {faqPreview.map((item) => (
-              <div key={item.question} className="rounded-2xl border border-black/10 bg-brand-mint/60 p-5">
-                <p className="text-sm font-semibold mb-2">{item.question}</p>
-                <p className="text-sm" style={{ color: "var(--color-text-muted)" }}>
-                  {item.answer}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8 text-center">
-            <LocalizedLink href="/about" className="inline-flex rounded-full border border-black px-6 py-3 text-xs uppercase tracking-[0.1em]">
-              Voir toute la FAQ
-            </LocalizedLink>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-brand-mint/70 px-4 py-12 text-center">
-        <h2 className="text-2xl md:text-3xl font-serif italic mb-2">Suivez les créations</h2>
-        <p className="text-sm mb-6" style={{ color: "var(--color-text-muted)" }}>
-          @creations.procaccini
-        </p>
-        <div className="max-w-2xl mx-auto grid grid-cols-5 gap-3 text-2xl">
-          {[
-            "🌸",
-            "🧵",
-            "✨",
-            "👗",
-            "💛",
-          ].map((emoji) => (
-            <div key={emoji} className="aspect-square rounded-xl bg-white/70 flex items-center justify-center">
-              {emoji}
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }

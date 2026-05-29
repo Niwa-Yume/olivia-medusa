@@ -79,7 +79,7 @@ export const HeaderDrawer: React.FC<{
                   FAQ
                 </LocalizedLink>
                 <LocalizedLink
-                  href="/inspiration"
+                  href="/contact"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Contact

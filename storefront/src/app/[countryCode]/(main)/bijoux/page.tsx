@@ -30,6 +30,8 @@ export default async function BijouxPage({ searchParams, params }: Params) {
       page={page}
       countryCode={countryCode}
       title="Bijoux"
+      emoji="💍"
+      description="Colliers, bracelets et boucles artisanaux, forgés avec soin."
       forcedType="Bijoux"
       allowedCollectionHandles={BIJOUX_COLLECTIONS}
       allowedCategoryHandles={BIJOUX_CATEGORIES}

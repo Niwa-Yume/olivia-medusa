@@ -1,9 +1,8 @@
 import { Suspense } from "react"
+import { LocalizedLink } from "@/components/LocalizedLink"
 
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
-import RefinementList from "@modules/store/components/refinement-list"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
-import { CollectionsSlider } from "@modules/store/components/collections-slider"
 
 import { getCollectionsList } from "@lib/data/collections"
 import { getCategoriesList } from "@lib/data/categories"
@@ -28,6 +27,8 @@ const StoreTemplate = async ({
   forcedType,
   allowedCollectionHandles,
   allowedCategoryHandles,
+  emoji,
+  description,
 }: {
   sortBy?: SortOptions
   collection?: string[]
@@ -39,6 +40,8 @@ const StoreTemplate = async ({
   forcedType?: string
   allowedCollectionHandles?: string[]
   allowedCategoryHandles?: string[]
+  emoji?: string
+  description?: string
 }) => {
   const pageNumber = page ? parseInt(page, 10) : 1
 
@@ -94,53 +97,147 @@ const StoreTemplate = async ({
   const effectiveTypeIds = matchedTypeIds?.length ? matchedTypeIds : undefined
 
   return (
-    <div className="md:pt-47 py-26 md:pb-36">
-      <CollectionsSlider
-        handles={filteredCollections.length ? allowedCollectionHandles : undefined}
-      />
-      <RefinementList
-        title={title}
-        collections={Object.fromEntries(
-          visibleCollections.map((c) => [c.handle, c.title])
-        )}
-        collection={effectiveCollection}
-        categories={Object.fromEntries(
-          visibleCategories.map((c) => [c.handle, c.name])
-        )}
-        category={effectiveCategory}
-        // On masque le filtre type quand il est imposé par la page
-        types={
-          forcedType
-            ? undefined
-            : Object.fromEntries(types.productTypes.map((t) => [t.value, t.value]))
-        }
-        type={effectiveType}
-        sortBy={sortBy}
-      />
-      <Suspense fallback={<SkeletonProductGrid />}>
-        {region && (
-          <PaginatedProducts
-            sortBy={sortBy}
-            page={pageNumber}
-            countryCode={countryCode}
-            collectionId={
-              !effectiveCollection
-                ? undefined
-                : visibleCollections
-                    .filter((c) => effectiveCollection.includes(c.handle))
-                    .map((c) => c.id)
-            }
-            categoryId={
-              !effectiveCategory
-                ? undefined
-                : visibleCategories
-                    .filter((c) => effectiveCategory.includes(c.handle))
-                    .map((c) => c.id)
-            }
-            typeId={effectiveTypeIds}
-          />
-        )}
-      </Suspense>
+    <div className="pt-18 md:pt-21">
+      {/* Topbar */}
+      <div className="bg-brand-salmon text-center px-4 py-2 text-xs tracking-[0.18em] uppercase">
+        🌿 Cousu main à Genève · Éditions limitées · Livraison Suisse
+      </div>
+
+      {/* Hero section */}
+      <section className="relative overflow-hidden bg-brand-mint px-4 py-12 md:py-18">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+          <p className="text-[22vw] leading-none font-serif italic text-black/10">
+            {emoji ?? "✨"}
+          </p>
+        </div>
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <p className="text-xs md:text-sm uppercase tracking-[0.25em] mb-4" style={{ color: "var(--color-text-muted)" }}>
+            ✨ Cousu main · Genève
+          </p>
+          <h1 className="text-3xl md:text-5xl font-serif italic leading-tight mb-4" style={{ color: "var(--color-text)" }}>
+            {title}
+          </h1>
+          {description && (
+            <p className="text-sm md:text-base max-w-xl mx-auto" style={{ color: "var(--color-text-muted)" }}>
+              {description}
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Trust band */}
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 border-y border-black/10">
+        {[
+          { emoji: "🧵", title: "Cousu main", body: "Chaque pièce à la main" },
+          { emoji: "✨", title: "Éditions limitées", body: "Petites séries uniques" },
+          { emoji: "🇨🇭", title: "Made in Switzerland", body: "Créé à Genève" },
+          { emoji: "📦", title: "Livraison soignée", body: "Expédition en Suisse" },
+        ].map((item) => (
+          <div key={item.title} className="flex gap-3 px-6 py-5 border-r last:border-r-0 border-black/10 bg-brand-salmon/60">
+            <span className="text-xl">{item.emoji}</span>
+            <div>
+              <p className="text-xs uppercase tracking-[0.08em] font-semibold">{item.title}</p>
+              <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>{item.body}</p>
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Collections cards */}
+      <section className="px-4 py-14 md:py-18">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-10 md:mb-12">
+            <p className="inline-block text-xs uppercase tracking-[0.2em] rounded-full px-4 py-2 bg-brand-mint mb-4">
+              Nos collections
+            </p>
+            <h2 className="text-2xl md:text-4xl font-serif italic" style={{ color: "var(--color-text)" }}>
+              Explorez nos creations
+            </h2>
+            <p className="text-sm mt-3" style={{ color: "var(--color-text-muted)" }}>
+              Des pieces uniques pour chaque occasion
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                href: "/vetements",
+                name: "Vetements",
+                sub: "Hauts · Robes · Pantalons · Pulls",
+                letter: "V",
+                bg: "bg-brand-mint/70",
+              },
+              {
+                href: "/accessoires",
+                name: "Accessoires",
+                sub: "Foulards · Sacs · Pochettes",
+                letter: "A",
+                bg: "bg-brand-salmon/70",
+              },
+              {
+                href: "/bijoux",
+                name: "Bijoux",
+                sub: "Bracelets · Colliers · Porte-clefs",
+                letter: "B",
+                bg: "bg-brand-mint/70",
+              },
+            ].map((item) => (
+              <LocalizedLink
+                key={item.href}
+                href={item.href}
+                className="rounded-3xl border border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
+              >
+                <div className={`h-40 md:h-44 flex items-center justify-center ${item.bg}`}>
+                  <span className="text-7xl md:text-8xl font-serif italic text-black/25">
+                    {item.letter}
+                  </span>
+                </div>
+                <div className="px-6 py-5 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xl font-serif italic mb-1" style={{ color: "var(--color-text)" }}>
+                      {item.name}
+                    </p>
+                    <p className="text-xs uppercase tracking-[0.08em]" style={{ color: "var(--color-text-muted)" }}>
+                      {item.sub}
+                    </p>
+                  </div>
+                  <span className="w-9 h-9 rounded-full border border-black/20 flex items-center justify-center text-lg">
+                    →
+                  </span>
+                </div>
+              </LocalizedLink>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Products grid */}
+      <div className="px-4 py-12 md:py-16 md:pb-28 max-w-6xl mx-auto">
+        <Suspense fallback={<SkeletonProductGrid />}>
+          {region && (
+            <PaginatedProducts
+              sortBy={sortBy}
+              page={pageNumber}
+              countryCode={countryCode}
+              collectionId={
+                !effectiveCollection
+                  ? undefined
+                  : visibleCollections
+                      .filter((c) => effectiveCollection.includes(c.handle))
+                      .map((c) => c.id)
+              }
+              categoryId={
+                !effectiveCategory
+                  ? undefined
+                  : visibleCategories
+                      .filter((c) => effectiveCategory.includes(c.handle))
+                      .map((c) => c.id)
+              }
+              typeId={effectiveTypeIds}
+            />
+          )}
+        </Suspense>
+      </div>
     </div>
   )
 }

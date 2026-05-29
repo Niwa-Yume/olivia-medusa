@@ -150,6 +150,8 @@ module.exports = {
         inter: [
           "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji",
         ],
+        playfair: ["var(--font-playfair)", "Georgia", "serif"],
+        nunito: ["var(--font-nunito)", "ui-sans-serif", "sans-serif"],
       },
       transitionProperty: {
         fontWeight: "font-weight",

@@ -30,6 +30,8 @@ export default async function AccessoiresPage({ searchParams, params }: Params) 
       page={page}
       countryCode={countryCode}
       title="Accessoires"
+      emoji="👜"
+      description="Sacs, ceintures et foulards faits main, chaque détail compte."
       forcedType="Accessoires"
       allowedCollectionHandles={ACCESSOIRES_COLLECTIONS}
       allowedCategoryHandles={ACCESSOIRES_CATEGORIES}

@@ -30,6 +30,8 @@ export default async function VetementsPage({ searchParams, params }: Params) {
       page={page}
       countryCode={countryCode}
       title="Vêtements"
+      emoji="👗"
+      description="Robes, vestes et ensembles cousus main en éditions limitées."
       forcedType="Vêtements"
       allowedCollectionHandles={VETEMENTS_COLLECTIONS}
       allowedCategoryHandles={VETEMENTS_CATEGORIES}

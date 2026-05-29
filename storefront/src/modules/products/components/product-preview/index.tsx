@@ -18,40 +18,62 @@ export default function ProductPreview({
       (cheapestPrice?.original_price_number || 0)
 
   return (
-    <LocalizedLink href={`/products/${product.handle}`}>
+    <LocalizedLink
+      href={`/products/${product.handle}`}
+      className="group rounded-2xl p-3 md:p-4 border border-black/10 bg-white/70 transition-transform hover:-translate-y-1 flex flex-col"
+    >
       <Thumbnail
         thumbnail={product.thumbnail}
         images={product.images}
-        size="square"
-        className="mb-4 md:mb-6 rounded-md"
+        size="3/4"
+        className="rounded-xl mb-3"
       />
-      <div className="flex justify-between max-md:flex-col">
-        <div className="max-md:text-xs">
-          <p className="mb-1">{product.title}</p>
-          {product.collection && (
-            <p className="text-grayscale-500 text-xs max-md:hidden">
-              {product.collection.title}
+      <div className="flex-1 flex flex-col">
+        <p
+          className="text-sm font-semibold mb-1 leading-snug"
+          style={{ color: "var(--color-text)" }}
+        >
+          {product.title}
+        </p>
+        {product.collection && (
+          <p
+            className="text-xs mb-2"
+            style={{ color: "var(--color-text-muted)" }}
+          >
+            {product.collection.title}
+          </p>
+        )}
+        <div className="mt-auto">
+          {cheapestPrice ? (
+            hasReducedPrice ? (
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-semibold text-red-500">
+                  {cheapestPrice.calculated_price}
+                </p>
+                <p
+                  className="text-xs line-through"
+                  style={{ color: "var(--color-text-muted)" }}
+                >
+                  {cheapestPrice.original_price}
+                </p>
+              </div>
+            ) : (
+              <p
+                className="text-xs font-semibold"
+                style={{ color: "var(--color-text-muted)" }}
+              >
+                {cheapestPrice.calculated_price}
+              </p>
+            )
+          ) : (
+            <p
+              className="text-xs"
+              style={{ color: "var(--color-text-muted)" }}
+            >
+              Prix sur demande
             </p>
           )}
         </div>
-        {cheapestPrice ? (
-          hasReducedPrice ? (
-            <div>
-              <p className="font-semibold max-md:text-xs text-red-primary">
-                {cheapestPrice.calculated_price}
-              </p>
-              <p className="max-md:text-xs text-grayscale-500 line-through">
-                {cheapestPrice.original_price}
-              </p>
-            </div>
-          ) : (
-            <div>
-              <p className="font-semibold max-md:text-xs">
-                {cheapestPrice.calculated_price}
-              </p>
-            </div>
-          )
-        ) : null}
       </div>
     </LocalizedLink>
   )

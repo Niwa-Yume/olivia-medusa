@@ -13,6 +13,7 @@
     body {
         background-color: inherit;
         color: inherit;
+        @apply font-nunito;
     }
 
     h1,
@@ -21,7 +22,7 @@
     h4,
     h5,
     h6 {
-        @apply font-medium;
+        @apply font-playfair font-medium;
     }
 
     a {
