@@ -10,8 +10,8 @@ module.exports = {
   theme: {
     colors: {
       brand: {
-        mint: '#C4FDFB',
-        salmon: '#F2BBBE'
+        mint: '#DBFEFD',
+        salmon: '#F9DEDF'
       },
       black: "#050505",
       "black-10%": "rgba(5, 5, 5, 0.1)",

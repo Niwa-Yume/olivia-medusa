@@ -9,6 +9,7 @@ import { getCategoriesList } from "@lib/data/categories"
 import { getProductTypesList } from "@lib/data/product-types"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
 import { getRegion } from "@lib/data/regions"
+import Image from "next/image"
 
 const normalizeLabel = (value: string) =>
   value
@@ -160,53 +161,62 @@ const StoreTemplate = async ({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
-              {
-                href: "/vetements",
-                name: "Vetements",
-                sub: "Hauts · Robes · Pantalons · Pulls",
-                letter: "V",
-                bg: "bg-brand-mint/70",
-              },
-              {
-                href: "/accessoires",
-                name: "Accessoires",
-                sub: "Foulards · Sacs · Pochettes",
-                letter: "A",
-                bg: "bg-brand-salmon/70",
-              },
-              {
-                href: "/bijoux",
-                name: "Bijoux",
-                sub: "Bracelets · Colliers · Porte-clefs",
-                letter: "B",
-                bg: "bg-brand-mint/70",
-              },
-            ].map((item) => (
-              <LocalizedLink
-                key={item.href}
-                href={item.href}
-                className="rounded-3xl border border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
-              >
-                <div className={`h-40 md:h-44 flex items-center justify-center ${item.bg}`}>
-                  <span className="text-7xl md:text-8xl font-serif italic text-black/25">
-                    {item.letter}
-                  </span>
-                </div>
-                <div className="px-6 py-5 flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xl font-serif italic mb-1" style={{ color: "var(--color-text)" }}>
-                      {item.name}
-                    </p>
-                    <p className="text-xs uppercase tracking-[0.08em]" style={{ color: "var(--color-text-muted)" }}>
-                      {item.sub}
-                    </p>
-                  </div>
-                  <span className="w-9 h-9 rounded-full border border-black/20 flex items-center justify-center text-lg">
-                    →
-                  </span>
-                </div>
-              </LocalizedLink>
-            ))}
+  {
+    href: "/vetements",
+    name: "Vetements",
+    sub: "Hauts · Robes · Pantalons · Pulls",
+    letter: "V",
+    bg: "bg-brand-mint/70",
+    image: "/images/content/OliviaVetements.jpeg",
+  },
+  {
+    href: "/accessoires",
+    name: "Accessoires",
+    sub: "Foulards · Sacs · Pochettes",
+    letter: "A",
+    bg: "bg-brand-salmon/70",
+    image: "/images/content/OliviaAccessoire.jpeg",
+  },
+  {
+    href: "/bijoux",
+    name: "Bijoux",
+    sub: "Bracelets · Colliers · Porte-clefs",
+    letter: "B",
+    bg: "bg-brand-mint/70",
+    image: "/images/content/OliviaBijoux.jpeg",
+  },
+].map((item) => (
+  <LocalizedLink
+    key={item.href}
+    href={item.href}
+    className="rounded-3xl border border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
+  >
+    {/* ── Le bloc à remplacer ── */}
+    <div className="relative h-40 md:h-44 overflow-hidden">
+      <Image
+        src={item.image}
+        alt={item.name}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 33vw"
+      />
+    </div>
+    {/* ── Reste inchangé ── */}
+    <div className="px-6 py-5 flex items-center justify-between gap-4">
+      <div>
+        <p className="text-xl font-serif italic mb-1" style={{ color: "var(--color-text)" }}>
+          {item.name}
+        </p>
+        <p className="text-xs uppercase tracking-[0.08em]" style={{ color: "var(--color-text-muted)" }}>
+          {item.sub}
+        </p>
+      </div>
+      <span className="w-9 h-9 rounded-full border border-black/20 flex items-center justify-center text-lg">
+        →
+      </span>
+    </div>
+  </LocalizedLink>
+))}
           </div>
         </div>
       </section>
