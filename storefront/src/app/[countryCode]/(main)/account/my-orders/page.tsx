@@ -17,6 +17,27 @@ export const metadata: Metadata = {
   description: "Check your order history",
 }
 
+const orderDateFormatter = new Intl.DateTimeFormat("fr-CH", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  timeZone: "UTC",
+})
+
+const formatOrderDate = (value?: string | Date | null) => {
+  if (!value) {
+    return "-"
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return "-"
+  }
+
+  return orderDateFormatter.format(date)
+}
+
 const OrderStatus: React.FC<{
   order: HttpTypes.StoreOrder
   className?: string
@@ -120,7 +141,7 @@ export default async function AccountMyOrdersPage({ searchParams }: PageProps) {
                     </div>
                     <p className="text-grayscale-500">
                       Order date:{" "}
-                      {new Date(order.created_at).toLocaleDateString()}
+                      {formatOrderDate(order.created_at)}
                     </p>
                   </div>
                   <div className="flex gap-3 overflow-x-auto sm:max-w-91 md:max-w-full lg:max-w-91">

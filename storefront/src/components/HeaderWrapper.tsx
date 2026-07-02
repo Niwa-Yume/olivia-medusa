@@ -2,16 +2,13 @@
 
 import * as React from "react"
 import { usePathname } from "next/navigation"
-import { useCountryCode } from "hooks/country-code"
 
 export const HeaderWrapper: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const pathName = usePathname()
-  const countryCode = useCountryCode()
-  const currentPath = countryCode
-    ? pathName.split(`/${countryCode}`)[1]
-    : pathName
+  const currentPath =
+    pathName.replace(/^\/[a-z]{2}(?=\/|$)/i, "") || "/"
   const isPageWithHeroImage =
     currentPath === "/inspiration" || currentPath.startsWith("/collections")
   const isAlwaysSticky =

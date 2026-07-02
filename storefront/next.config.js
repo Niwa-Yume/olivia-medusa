@@ -12,6 +12,7 @@ const nextConfig = {
     staticGenerationMaxConcurrency: 1,
   },
   images: {
+    qualities: [50, 75],
     remotePatterns: [
       {
         protocol: "http",

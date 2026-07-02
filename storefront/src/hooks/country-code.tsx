@@ -10,29 +10,31 @@ export const useCountryCode = (
   const pathName = usePathname()
   const params = useParams()
 
+  const pathParts = pathName.replace(/^\//, "").split("/")
+  const pathCountryCode =
+    pathParts.length > 0 && pathParts[0].length === 2
+      ? pathParts[0].toLowerCase()
+      : undefined
+
   if (typeof params.countryCode === "string") {
     return params.countryCode
   }
 
-  if (countryOptions) {
-    // Check if the path contains a country code and update the current path
-    const pathParts = pathName.replace(/^\//, "").split("/")
+  if (Array.isArray(params.countryCode) && typeof params.countryCode[0] === "string") {
+    return params.countryCode[0]
+  }
 
-    if (pathParts.length > 1) {
-      const firstPathPart = pathParts[0]
+  if (countryOptions) {
+    if (pathCountryCode) {
       const country = countryOptions.find(
-        (country) => country.country === firstPathPart
+        (option) => option.country === pathCountryCode
       )
 
-      if (country) {
+      if (country?.country) {
         return country.country
       }
     }
-  } else {
-    const pathParts = pathName.replace(/^\//, "").split("/")
-
-    if (pathParts.length > 1 && pathParts[0].length === 2) {
-      return pathParts[0]
-    }
   }
+
+  return pathCountryCode
 }

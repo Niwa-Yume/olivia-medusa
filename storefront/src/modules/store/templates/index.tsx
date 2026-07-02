@@ -94,6 +94,13 @@ const StoreTemplate = async ({
     visibleCategories.some((c) => c.handle === handle)
   )
 
+  const categoryHandlesToFilter =
+    effectiveCategory && effectiveCategory.length
+      ? effectiveCategory
+      : allowedCategoryHandles?.length
+        ? visibleCategories.map((c) => c.handle)
+        : undefined
+
   // Fallback: si le type forcé n'existe pas encore en DB, on n'applique pas le filtre type
   const effectiveTypeIds = matchedTypeIds?.length ? matchedTypeIds : undefined
 
@@ -237,10 +244,10 @@ const StoreTemplate = async ({
                       .map((c) => c.id)
               }
               categoryId={
-                !effectiveCategory
+                !categoryHandlesToFilter
                   ? undefined
                   : visibleCategories
-                      .filter((c) => effectiveCategory.includes(c.handle))
+                      .filter((c) => categoryHandlesToFilter.includes(c.handle))
                       .map((c) => c.id)
               }
               typeId={effectiveTypeIds}
