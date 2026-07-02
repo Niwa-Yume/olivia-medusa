@@ -1,5 +1,4 @@
 import { HttpTypes } from "@medusajs/types"
-import { notFound } from "next/navigation"
 import { NextRequest, NextResponse } from "next/server"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL
@@ -18,29 +17,47 @@ async function getRegionMap() {
     !regionMap.keys().next().value ||
     regionMapUpdated < Date.now() - 3600 * 1000
   ) {
-    // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
-    const { regions } = await fetch(`${BACKEND_URL}/store/regions`, {
-      headers: {
-        "x-publishable-api-key": PUBLISHABLE_API_KEY!,
-      },
-      next: {
-        revalidate: 3600,
-        tags: ["regions"],
-      },
-    }).then((res) => res.json())
-
-    if (!regions?.length) {
-      notFound()
+    if (!BACKEND_URL || !PUBLISHABLE_API_KEY) {
+      return regionMapCache.regionMap
     }
 
-    // Create a map of country codes to regions.
-    regions.forEach((region: HttpTypes.StoreRegion) => {
-      region.countries?.forEach((c) => {
-        regionMapCache.regionMap.set(c.iso_2 ?? "", region)
+    try {
+      // Fetch regions from Medusa. We can't use the JS client here because middleware is running on Edge and the client needs a Node environment.
+      const response = await fetch(`${BACKEND_URL}/store/regions`, {
+        headers: {
+          "x-publishable-api-key": PUBLISHABLE_API_KEY,
+        },
+        next: {
+          revalidate: 3600,
+          tags: ["regions"],
+        },
       })
-    })
 
-    regionMapCache.regionMapUpdated = Date.now()
+      if (!response.ok) {
+        return regionMapCache.regionMap
+      }
+
+      const { regions } = await response.json()
+
+      if (!regions?.length) {
+        return regionMapCache.regionMap
+      }
+
+      // Create a map of country codes to regions.
+      regionMapCache.regionMap.clear()
+
+      regions.forEach((region: HttpTypes.StoreRegion) => {
+        region.countries?.forEach((c) => {
+          regionMapCache.regionMap.set(c.iso_2 ?? "", region)
+        })
+      })
+
+      regionMapCache.regionMapUpdated = Date.now()
+    } catch (error) {
+      if (process.env.NODE_ENV === "development") {
+        console.error("Middleware.ts: failed to fetch region map", error)
+      }
+    }
   }
 
   return regionMapCache.regionMap
@@ -92,8 +109,12 @@ export async function middleware(request: NextRequest) {
   const regionMap = await getRegionMap()
   const countryCode = regionMap && (await getCountryCode(request, regionMap))
 
+  if (!countryCode) {
+    return NextResponse.next()
+  }
+
   const urlHasCountryCode =
-    countryCode && request.nextUrl.pathname.split("/")[1].includes(countryCode)
+    request.nextUrl.pathname.split("/")[1]?.includes(countryCode)
 
   // check if one of the country codes is in the url
   if (urlHasCountryCode) {

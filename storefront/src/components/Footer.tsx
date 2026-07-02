@@ -1,6 +1,6 @@
 "use client"
 
-import { useParams, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { twMerge } from "tailwind-merge"
 import { Layout, LayoutColumn } from "@/components/Layout"
 // import { NewsletterForm } from "@/components/NewsletterForm"
@@ -8,8 +8,8 @@ import { LocalizedLink } from "@/components/LocalizedLink"
 
 export const Footer: React.FC = () => {
   const pathName = usePathname()
-  const { countryCode } = useParams()
-  const currentPath = pathName.split(`/${countryCode}`)[1]
+  const currentPath =
+    pathName.replace(/^\/[a-z]{2}(?=\/|$)/i, "") || "/"
 
   const isAuthPage = currentPath === "/register" || currentPath === "/login"
 
@@ -28,7 +28,7 @@ export const Footer: React.FC = () => {
                 <h1 className="text-lg md:text-xl mb-2 md:mb-6 leading-none md:leading-[0.9]">
                   Oprocaccini
                 </h1>
-                <p className="text-xs">
+                <p className="text-xs" suppressHydrationWarning>
                   &copy; {new Date().getFullYear()}, Oprocaccini
                 </p>
               </div>

@@ -1,7 +1,9 @@
 import { Metadata } from "next"
+import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
 import { getRegion } from "@lib/data/regions"
 import { getProductsList } from "@lib/data/products"
+import { getCategoriesList } from "@lib/data/categories"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { LocalizedLink } from "@/components/LocalizedLink"
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -16,21 +18,70 @@ const categories = [
     title: "Vêtements",
     subtitle: "Robes · Vestes · Ensembles",
     href: "/vetements",
-    emoji: "👗",
+    image: "/images/content/OliviaVetements.jpeg",
   },
   {
     title: "Accessoires",
     subtitle: "Sacs · Ceintures · Foulards",
     href: "/accessoires",
-    emoji: "👜",
+    image: "/images/content/OliviaAccessoire.jpeg",
   },
   {
     title: "Bijoux",
     subtitle: "Colliers · Bracelets · Boucles",
     href: "/bijoux",
-    emoji: "💍",
+    image: "/images/content/OliviaBijoux.jpeg",
   },
 ] as const
+
+const HOME_CATEGORY_GROUPS = {
+  vetements: ["robes", "vestes", "ensembles"],
+  accessoires: ["sacs", "ceintures", "foulards"],
+  bijoux: ["colliers", "bracelets", "boucles"],
+} as const
+
+const interleaveProducts = (
+  groups: HttpTypes.StoreProduct[][],
+  limit: number
+) => {
+  const positions = new Array(groups.length).fill(0)
+  const mixed: HttpTypes.StoreProduct[] = []
+  const seen = new Set<string>()
+
+  while (mixed.length < limit) {
+    let hasInsertedInRound = false
+
+    for (let i = 0; i < groups.length; i++) {
+      const group = groups[i]
+      let cursor = positions[i]
+
+      while (cursor < group.length && seen.has(group[cursor].id)) {
+        cursor += 1
+      }
+
+      if (cursor >= group.length) {
+        positions[i] = cursor
+        continue
+      }
+
+      const product = group[cursor]
+      positions[i] = cursor + 1
+      seen.add(product.id)
+      mixed.push(product)
+      hasInsertedInRound = true
+
+      if (mixed.length >= limit) {
+        break
+      }
+    }
+
+    if (!hasInsertedInRound) {
+      break
+    }
+  }
+
+  return mixed
+}
 
 
 function ProductCard({ product }: { product: HttpTypes.StoreProduct }) {
@@ -69,16 +120,58 @@ export default async function Home({
     return null
   }
 
-  const {
-    response: { products },
-  } = await getProductsList({
-    countryCode,
-    queryParams: {
-      limit: 4,
-      fields: "*variants.calculated_price,+collection.title",
-      order: "-created_at",
-    },
-  })
+  const { product_categories: allCategories } = await getCategoriesList(0, 200, [
+    "id",
+    "handle",
+  ])
+
+  const resolveCategoryIds = (handles: readonly string[]) => {
+    const ids = allCategories
+      .filter((category) => handles.includes(category.handle))
+      .map((category) => category.id)
+
+    return ids.length ? ids : undefined
+  }
+
+  const [vetementsProductsResult, accessoiresProductsResult, bijouxProductsResult] =
+    await Promise.all([
+      getProductsList({
+        countryCode,
+        queryParams: {
+          limit: 4,
+          fields: "*variants.calculated_price,+collection.title",
+          order: "-created_at",
+          category_id: resolveCategoryIds(HOME_CATEGORY_GROUPS.vetements),
+        },
+      }),
+      getProductsList({
+        countryCode,
+        queryParams: {
+          limit: 4,
+          fields: "*variants.calculated_price,+collection.title",
+          order: "-created_at",
+          category_id: resolveCategoryIds(HOME_CATEGORY_GROUPS.accessoires),
+        },
+      }),
+      getProductsList({
+        countryCode,
+        queryParams: {
+          limit: 4,
+          fields: "*variants.calculated_price,+collection.title",
+          order: "-created_at",
+          category_id: resolveCategoryIds(HOME_CATEGORY_GROUPS.bijoux),
+        },
+      }),
+    ])
+
+  const mixedProducts = interleaveProducts(
+    [
+      vetementsProductsResult.response.products,
+      accessoiresProductsResult.response.products,
+      bijouxProductsResult.response.products,
+    ],
+    6
+  )
 
   return (
     <div className="pt-18 md:pt-21">
@@ -145,8 +238,14 @@ export default async function Home({
                 href={category.href}
                 className="rounded-3xl rounded-md border-black/10 overflow-hidden bg-white/75 transition-transform hover:-translate-y-1"
               >
-                <div className="h-40 flex items-center justify-center text-6xl bg-brand-mint/70 rounded-sm">
-                  {category.emoji}
+                <div className="relative h-40 overflow-hidden rounded-sm bg-brand-mint/70">
+                  <Image
+                    src={category.image}
+                    alt={category.title}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                  />
                 </div>
                 <div className="px-6 py-5">
                   <p className="text-xl font-serif italic mb-1">{category.title}</p>
@@ -169,7 +268,7 @@ export default async function Home({
             <h2 className="text-2xl md:text-4xl font-serif italic">Nouveautés</h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {products.map((product) => (
+            {mixedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

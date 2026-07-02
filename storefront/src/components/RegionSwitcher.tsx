@@ -32,17 +32,14 @@ export const RegionSwitcher = withReactQueryProvider<{
   }) => {
     const pathName = usePathname()
     const countryCode = useCountryCode(countryOptions)
-    let currentPath = pathName
+    const currentPath =
+      pathName.replace(/^\/[a-z]{2}(?=\/|$)/i, "") || "/"
 
     const updateRegion = useUpdateRegion()
 
-    if (countryCode) {
-      currentPath = pathName.split(`/${countryCode}`)[1]
-    }
-
     return (
       <ReactAria.Select
-        selectedKey={`${countryCode}`}
+        selectedKey={countryCode ?? null}
         onSelectionChange={(key) => {
           updateRegion.mutate({ countryCode: `${key}`, currentPath })
         }}
