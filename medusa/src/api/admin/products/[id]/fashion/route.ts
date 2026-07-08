@@ -22,10 +22,20 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     (option) => option.title === 'Color',
   );
 
+  // Some products do not belong to the fashion option model.
+  if (!materialOption || !colorOption) {
+    return res.status(200).json({
+      missing_materials: [],
+      materials: [],
+    });
+  }
+
   const materialsAndColorsNamesTree = new Map<string, string[]>();
 
   for (const productVariant of product.variants) {
-    const materialName = productVariant.options.find(
+    const variantOptions = productVariant.options ?? [];
+
+    const materialName = variantOptions.find(
       (option) => option.option_id === materialOption.id,
     )?.value;
 
@@ -33,14 +43,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       continue;
     }
 
-    const colorNames = productVariant.options
+    const colorNames = variantOptions
       .filter((option) => option.option_id === colorOption.id)
       .map((option) => option.value);
 
     if (!materialsAndColorsNamesTree.has(materialName)) {
       materialsAndColorsNamesTree.set(materialName, colorNames);
     } else {
-      const existingColorNames = materialsAndColorsNamesTree.get(materialName);
+      const existingColorNames =
+        materialsAndColorsNamesTree.get(materialName) ?? [];
 
       materialsAndColorsNamesTree.set(
         materialName,
@@ -66,10 +77,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     materials: materials.map((material) => ({
       ...material,
       colors: material.colors.filter((color) =>
-        materialsAndColorsNamesTree.get(material.name).includes(color.name),
+        (materialsAndColorsNamesTree.get(material.name) ?? []).includes(
+          color.name,
+        ),
       ),
-      missing_colors: materialsAndColorsNamesTree
-        .get(material.name)
+      missing_colors: (materialsAndColorsNamesTree.get(material.name) ?? [])
         .filter((colorName) =>
           material.colors.every((color) => color.name !== colorName),
         ),

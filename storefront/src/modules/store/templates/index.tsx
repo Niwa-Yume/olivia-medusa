@@ -4,7 +4,6 @@ import { LocalizedLink } from "@/components/LocalizedLink"
 import SkeletonProductGrid from "@modules/skeletons/templates/skeleton-product-grid"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 
-import { getCollectionsList } from "@lib/data/collections"
 import { getCategoriesList } from "@lib/data/categories"
 import { getProductTypesList } from "@lib/data/product-types"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
@@ -19,41 +18,35 @@ const normalizeLabel = (value: string) =>
 
 const StoreTemplate = async ({
   sortBy,
-  collection,
-  category,
   type,
+  forcedType,
+  category,
   page,
   countryCode,
   title,
-  forcedType,
-  allowedCollectionHandles,
   allowedCategoryHandles,
   emoji,
   description,
 }: {
   sortBy?: SortOptions
-  collection?: string[]
-  category?: string[]
   type?: string[]
+  forcedType?: string
+  category?: string[]
   page?: string
   countryCode: string
   title?: string
-  forcedType?: string
-  allowedCollectionHandles?: string[]
   allowedCategoryHandles?: string[]
   emoji?: string
   description?: string
 }) => {
   const pageNumber = page ? parseInt(page, 10) : 1
 
-  const [collections, categories, types, region] = await Promise.all([
-    getCollectionsList(0, 100, ["id", "title", "handle"]),
+  const [categories, types, region] = await Promise.all([
     getCategoriesList(0, 100, ["id", "name", "handle"]),
     getProductTypesList(0, 100, ["id", "value"]),
     getRegion(countryCode),
   ])
 
-  // Si un type est imposé par la page, on le fusionne avec les query params éventuels
   const effectiveType = forcedType
     ? Array.from(new Set([...(type ?? []), forcedType]))
     : type
@@ -68,13 +61,9 @@ const StoreTemplate = async ({
         )
         .map((t) => t.id)
 
-  const filteredCollections = allowedCollectionHandles
-    ? collections.collections.filter((c) => allowedCollectionHandles.includes(c.handle))
-    : collections.collections
-
-  const visibleCollections = filteredCollections.length
-    ? filteredCollections
-    : collections.collections
+  const hasUnknownForcedType = Boolean(
+    forcedType && (!matchedTypeIds || matchedTypeIds.length === 0)
+  )
 
   const filteredCategories = allowedCategoryHandles
     ? categories.product_categories.filter((c) =>
@@ -86,10 +75,6 @@ const StoreTemplate = async ({
     ? filteredCategories
     : categories.product_categories
 
-  const effectiveCollection = collection?.filter((handle) =>
-    visibleCollections.some((c) => c.handle === handle)
-  )
-
   const effectiveCategory = category?.filter((handle) =>
     visibleCategories.some((c) => c.handle === handle)
   )
@@ -100,9 +85,6 @@ const StoreTemplate = async ({
       : allowedCategoryHandles?.length
         ? visibleCategories.map((c) => c.handle)
         : undefined
-
-  // Fallback: si le type forcé n'existe pas encore en DB, on n'applique pas le filtre type
-  const effectiveTypeIds = matchedTypeIds?.length ? matchedTypeIds : undefined
 
   return (
     <div className="pt-18 md:pt-21">
@@ -151,12 +133,12 @@ const StoreTemplate = async ({
         ))}
       </section>
 
-      {/* Collections cards */}
+      {/* Category cards */}
       <section className="px-4 py-14 md:py-18">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-10 md:mb-12">
             <p className="inline-block text-xs uppercase tracking-[0.2em] rounded-full px-4 py-2 bg-brand-mint mb-4">
-              Nos collections
+              Nos categories
             </p>
             <h2 className="text-2xl md:text-4xl font-serif italic" style={{ color: "var(--color-text)" }}>
               Explorez nos creations
@@ -236,13 +218,8 @@ const StoreTemplate = async ({
               sortBy={sortBy}
               page={pageNumber}
               countryCode={countryCode}
-              collectionId={
-                !effectiveCollection
-                  ? undefined
-                  : visibleCollections
-                      .filter((c) => effectiveCollection.includes(c.handle))
-                      .map((c) => c.id)
-              }
+              productsIds={hasUnknownForcedType ? [] : undefined}
+              typeId={matchedTypeIds?.length ? matchedTypeIds : undefined}
               categoryId={
                 !categoryHandlesToFilter
                   ? undefined
@@ -250,7 +227,6 @@ const StoreTemplate = async ({
                       .filter((c) => categoryHandlesToFilter.includes(c.handle))
                       .map((c) => c.id)
               }
-              typeId={effectiveTypeIds}
             />
           )}
         </Suspense>

@@ -24,6 +24,13 @@ export default async function indexProductHandler({
     relations: ['variants', 'options', 'tags', 'collection', 'type', 'images', 'categories'],
   });
 
+  if (!product) {
+    logger.warn(
+      `Skipping search indexing for ${productId}: product not found after ${name}`,
+    );
+    return;
+  }
+
   if (name === 'product.updated') {
     await meilisearchService.replaceDocuments(
       'products',

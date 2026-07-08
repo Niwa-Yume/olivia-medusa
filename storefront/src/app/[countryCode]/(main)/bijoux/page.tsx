@@ -7,14 +7,9 @@ export const metadata: Metadata = {
   description: "Découvrez tous les bijoux faits main OProcaccini.",
 }
 
-const BIJOUX_COLLECTIONS = ["eclat-dore", "atelier-pierres"]
-const BIJOUX_CATEGORIES = ["colliers", "bracelets", "boucles"]
-
 type Params = {
   searchParams: Promise<{
     sortBy?: SortOptions
-    collection?: string | string[]
-    category?: string | string[]
     page?: string
   }>
   params: Promise<{ countryCode: string }>
@@ -22,7 +17,7 @@ type Params = {
 
 export default async function BijouxPage({ searchParams, params }: Params) {
   const { countryCode } = await params
-  const { sortBy, page, collection, category } = await searchParams
+  const { sortBy, page } = await searchParams
 
   return (
     <StoreTemplate
@@ -33,18 +28,6 @@ export default async function BijouxPage({ searchParams, params }: Params) {
       emoji="💍"
       description="Colliers, bracelets et boucles artisanaux, forgés avec soin."
       forcedType="Bijoux"
-      allowedCollectionHandles={BIJOUX_COLLECTIONS}
-      allowedCategoryHandles={BIJOUX_CATEGORIES}
-      collection={
-        !collection
-          ? undefined
-          : Array.isArray(collection)
-            ? collection
-            : [collection]
-      }
-      category={
-        !category ? undefined : Array.isArray(category) ? category : [category]
-      }
     />
   )
 }

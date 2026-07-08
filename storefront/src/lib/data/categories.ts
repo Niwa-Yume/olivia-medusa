@@ -32,13 +32,16 @@ export const getCategoriesList = async function (
   })
 }
 
-export const getCategoryByHandle = async function (categoryHandle: string[]) {
-  return sdk.client.fetch<HttpTypes.StoreProductCategoryListResponse>(
-    `/store/product-categories`,
-    {
-      query: { handle: categoryHandle },
+export const getCategoryByHandle = async function (categoryHandle: string) {
+  return sdk.client
+    .fetch<HttpTypes.StoreProductCategoryListResponse>(`/store/product-categories`, {
+      query: {
+        handle: [categoryHandle],
+        fields: "+category_children",
+        limit: 1,
+      },
       next: { tags: ["categories"] },
       cache: "force-cache",
-    }
-  )
+    })
+    .then(({ product_categories }) => product_categories[0])
 }
