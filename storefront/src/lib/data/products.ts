@@ -2,7 +2,6 @@
 
 import { sdk } from "@lib/config"
 import { HttpTypes } from "@medusajs/types"
-import { getRegion } from "@lib/data/regions"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { sortProducts } from "@lib/util/sort-products"
 
@@ -21,7 +20,7 @@ export const getProductsById = async function ({
         fields: "*variants.calculated_price,+variants.inventory_quantity",
       } satisfies HttpTypes.StoreProductListParams,
       next: { tags: ["products"] },
-      cache: "force-cache",
+      cache: "no-store",
     })
     .then(({ products }) => products)
 }
@@ -30,16 +29,36 @@ export const getProductByHandle = async function (
   handle: string,
   regionId: string
 ) {
-  return sdk.client
-    .fetch<{ products: HttpTypes.StoreProduct[] }>(`/store/products`, {
+  const withRegion = await sdk.client.fetch<{ products: HttpTypes.StoreProduct[] }>(
+    `/store/products`,
+    {
       query: {
         handle,
         region_id: regionId,
         fields: "*variants.calculated_price,+variants.inventory_quantity",
       } satisfies HttpTypes.StoreProductListParams,
       next: { tags: ["products"] },
-    })
-    .then(({ products }) => products[0])
+      cache: "no-store",
+    }
+  )
+
+  if (withRegion.products[0]) {
+    return withRegion.products[0]
+  }
+
+  const withoutRegion = await sdk.client.fetch<{ products: HttpTypes.StoreProduct[] }>(
+    `/store/products`,
+    {
+      query: {
+        handle,
+        fields: "+variants.inventory_quantity",
+      } satisfies HttpTypes.StoreProductListParams,
+      next: { tags: ["products"] },
+      cache: "no-store",
+    }
+  )
+
+  return withoutRegion.products[0]
 }
 
 export const getProductFashionDataByHandle = async function (handle: string) {
@@ -56,7 +75,7 @@ export const getProductFashionDataByHandle = async function (handle: string) {
   }>(`/store/custom/fashion/${handle}`, {
     method: "GET",
     next: { tags: ["products"] },
-    cache: "force-cache",
+    cache: "no-store",
   })
 }
 
@@ -76,41 +95,32 @@ export const getProductsList = async function ({
   const page = Math.max(1, pageParam || 1)
   const limit = queryParams?.limit || 12
   const offset = (page - 1) * limit
-  const region = await getRegion(countryCode)
+  void countryCode
 
-  if (!region) {
-    return {
-      response: { products: [], count: 0 },
-      nextPage: null,
-    }
+  const productList = await sdk.client.fetch<{
+    products: HttpTypes.StoreProduct[]
+    count: number
+  }>(`/store/products`, {
+    query: {
+      limit,
+      offset,
+      fields: "*variants.calculated_price",
+      ...queryParams,
+    } satisfies HttpTypes.StoreProductListParams,
+    next: { tags: ["products"] },
+    cache: "no-store",
+  })
+
+  const nextPage = productList.count > offset + limit ? page + 1 : null
+
+  return {
+    response: {
+      products: productList.products,
+      count: productList.count,
+    },
+    nextPage,
+    queryParams,
   }
-  return sdk.client
-    .fetch<{ products: HttpTypes.StoreProduct[]; count: number }>(
-      `/store/products`,
-      {
-        query: {
-          limit,
-          offset,
-          region_id: region.id,
-          fields: "*variants.calculated_price",
-          ...queryParams,
-        } satisfies HttpTypes.StoreProductListParams,
-        next: { tags: ["products"] },
-        cache: "force-cache",
-      }
-    )
-    .then(({ products, count }) => {
-      const nextPage = count > offset + limit ? page + 1 : null
-
-      return {
-        response: {
-          products,
-          count,
-        },
-        nextPage,
-        queryParams,
-      }
-    })
 }
 
 /**

@@ -7,14 +7,9 @@ export const metadata: Metadata = {
   description: "Découvrez toutes les créations vestimentaires OProcaccini.",
 }
 
-const VETEMENTS_COLLECTIONS = ["atelier-capsule", "silhouettes-de-soiree"]
-const VETEMENTS_CATEGORIES = ["robes", "vestes", "ensembles"]
-
 type Params = {
   searchParams: Promise<{
     sortBy?: SortOptions
-    collection?: string | string[]
-    category?: string | string[]
     page?: string
   }>
   params: Promise<{ countryCode: string }>
@@ -22,7 +17,7 @@ type Params = {
 
 export default async function VetementsPage({ searchParams, params }: Params) {
   const { countryCode } = await params
-  const { sortBy, page, collection, category } = await searchParams
+  const { sortBy, page } = await searchParams
 
   return (
     <StoreTemplate
@@ -33,18 +28,6 @@ export default async function VetementsPage({ searchParams, params }: Params) {
       emoji="👗"
       description="Robes, vestes et ensembles cousus main en éditions limitées."
       forcedType="Vêtements"
-      allowedCollectionHandles={VETEMENTS_COLLECTIONS}
-      allowedCategoryHandles={VETEMENTS_CATEGORIES}
-      collection={
-        !collection
-          ? undefined
-          : Array.isArray(collection)
-            ? collection
-            : [collection]
-      }
-      category={
-        !category ? undefined : Array.isArray(category) ? category : [category]
-      }
     />
   )
 }

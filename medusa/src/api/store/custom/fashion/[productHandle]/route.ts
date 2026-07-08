@@ -21,6 +21,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     },
   );
 
+  if (!product) {
+    return res.status(200).json({
+      materials: [],
+    });
+  }
+
   const materialOption = product.options.find(
     (option) => option.title === 'Material',
   );
@@ -38,7 +44,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   const materialsAndColorsNamesTree = new Map<string, string[]>();
 
   for (const productVariant of product.variants) {
-    const materialName = productVariant.options.find(
+    const variantOptions = productVariant.options ?? [];
+
+    const materialName = variantOptions.find(
       (option) => option.option_id === materialOption.id,
     )?.value;
 
@@ -46,14 +54,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       continue;
     }
 
-    const colorNames = productVariant.options
+    const colorNames = variantOptions
       .filter((option) => option.option_id === colorOption.id)
       .map((option) => option.value);
 
     if (!materialsAndColorsNamesTree.has(materialName)) {
       materialsAndColorsNamesTree.set(materialName, colorNames);
     } else {
-      const existingColorNames = materialsAndColorsNamesTree.get(materialName);
+      const existingColorNames =
+        materialsAndColorsNamesTree.get(materialName) ?? [];
 
       materialsAndColorsNamesTree.set(
         materialName,
@@ -77,7 +86,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       name: material.name,
       colors: material.colors
         .filter((color) =>
-          materialsAndColorsNamesTree.get(material.name).includes(color.name),
+          (materialsAndColorsNamesTree.get(material.name) ?? []).includes(
+            color.name,
+          ),
         )
         .map((color) => ({
           id: color.id,

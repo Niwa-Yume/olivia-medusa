@@ -3,7 +3,6 @@ import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
 import { getRegion } from "@lib/data/regions"
 import { getProductsList } from "@lib/data/products"
-import { getCategoriesList } from "@lib/data/categories"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { LocalizedLink } from "@/components/LocalizedLink"
 import Thumbnail from "@modules/products/components/thumbnail"
@@ -33,56 +32,6 @@ const categories = [
     image: "/images/content/OliviaBijoux.jpeg",
   },
 ] as const
-
-const HOME_CATEGORY_GROUPS = {
-  vetements: ["robes", "vestes", "ensembles"],
-  accessoires: ["sacs", "ceintures", "foulards"],
-  bijoux: ["colliers", "bracelets", "boucles"],
-} as const
-
-const interleaveProducts = (
-  groups: HttpTypes.StoreProduct[][],
-  limit: number
-) => {
-  const positions = new Array(groups.length).fill(0)
-  const mixed: HttpTypes.StoreProduct[] = []
-  const seen = new Set<string>()
-
-  while (mixed.length < limit) {
-    let hasInsertedInRound = false
-
-    for (let i = 0; i < groups.length; i++) {
-      const group = groups[i]
-      let cursor = positions[i]
-
-      while (cursor < group.length && seen.has(group[cursor].id)) {
-        cursor += 1
-      }
-
-      if (cursor >= group.length) {
-        positions[i] = cursor
-        continue
-      }
-
-      const product = group[cursor]
-      positions[i] = cursor + 1
-      seen.add(product.id)
-      mixed.push(product)
-      hasInsertedInRound = true
-
-      if (mixed.length >= limit) {
-        break
-      }
-    }
-
-    if (!hasInsertedInRound) {
-      break
-    }
-  }
-
-  return mixed
-}
-
 
 function ProductCard({ product }: { product: HttpTypes.StoreProduct }) {
   const { cheapestPrice } = getProductPrice({ product })
@@ -120,58 +69,16 @@ export default async function Home({
     return null
   }
 
-  const { product_categories: allCategories } = await getCategoriesList(0, 200, [
-    "id",
-    "handle",
-  ])
+  const latestProductsResult = await getProductsList({
+    countryCode,
+    queryParams: {
+      limit: 8,
+      order: "-created_at",
+      fields: "*variants.calculated_price",
+    },
+  })
 
-  const resolveCategoryIds = (handles: readonly string[]) => {
-    const ids = allCategories
-      .filter((category) => handles.includes(category.handle))
-      .map((category) => category.id)
-
-    return ids.length ? ids : undefined
-  }
-
-  const [vetementsProductsResult, accessoiresProductsResult, bijouxProductsResult] =
-    await Promise.all([
-      getProductsList({
-        countryCode,
-        queryParams: {
-          limit: 4,
-          fields: "*variants.calculated_price,+collection.title",
-          order: "-created_at",
-          category_id: resolveCategoryIds(HOME_CATEGORY_GROUPS.vetements),
-        },
-      }),
-      getProductsList({
-        countryCode,
-        queryParams: {
-          limit: 4,
-          fields: "*variants.calculated_price,+collection.title",
-          order: "-created_at",
-          category_id: resolveCategoryIds(HOME_CATEGORY_GROUPS.accessoires),
-        },
-      }),
-      getProductsList({
-        countryCode,
-        queryParams: {
-          limit: 4,
-          fields: "*variants.calculated_price,+collection.title",
-          order: "-created_at",
-          category_id: resolveCategoryIds(HOME_CATEGORY_GROUPS.bijoux),
-        },
-      }),
-    ])
-
-  const mixedProducts = interleaveProducts(
-    [
-      vetementsProductsResult.response.products,
-      accessoiresProductsResult.response.products,
-      bijouxProductsResult.response.products,
-    ],
-    6
-  )
+  const latestProducts = latestProductsResult.response.products
 
   return (
     <div className="pt-18 md:pt-21">
@@ -194,7 +101,7 @@ export default async function Home({
             Des créations haute couture en éditions limitées, pensées et assemblées avec soin. Chaque pièce porte une histoire, la vôtre.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <LocalizedLink href="/vetements" className="px-6 py-3 rounded-full bg-black text-white text-xs uppercase tracking-[0.08em]">
+            <LocalizedLink href="/store" className="px-6 py-3 rounded-full bg-black text-white text-xs uppercase tracking-[0.08em]">
               🛍 Voir la boutique
             </LocalizedLink>
             <LocalizedLink href="/about" className="px-6 py-3 rounded-full border border-black text-xs uppercase tracking-[0.08em]">
@@ -268,12 +175,12 @@ export default async function Home({
             <h2 className="text-2xl md:text-4xl font-serif italic">Nouveautés</h2>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {mixedProducts.map((product) => (
+            {latestProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
           <div className="text-center mt-8">
-            <LocalizedLink href="/vetements" className="inline-flex rounded-full border border-black px-6 py-3 text-xs uppercase tracking-[0.1em]">
+            <LocalizedLink href="/store" className="inline-flex rounded-full border border-black px-6 py-3 text-xs uppercase tracking-[0.1em]">
               Voir toute la boutique →
             </LocalizedLink>
           </div>
