@@ -12,14 +12,18 @@ import {
   createTaxRegionsWorkflow,
   linkSalesChannelsToApiKeyWorkflow,
   linkSalesChannelsToStockLocationWorkflow,
+  updateRegionsWorkflow,
   updateStoresWorkflow,
   uploadFilesWorkflow,
 } from '@medusajs/medusa/core-flows';
 import {
   ExecArgs,
   IFulfillmentModuleService,
+  IRegionModuleService,
+  RegionDTO,
   ISalesChannelModuleService,
   IStoreModuleService,
+  ITaxModuleService,
 } from '@medusajs/framework/types';
 import {
   ContainerRegistrationKeys,
@@ -57,7 +61,14 @@ export default async function seedDemoData({ container }: ExecArgs) {
     'fashionModuleService',
   );
 
-  const countries = ['hr', 'gb', 'de', 'dk', 'se', 'fr', 'es', 'it'];
+  const regionModuleService: IRegionModuleService = container.resolve(
+    Modules.REGION,
+  );
+  const taxModuleService: ITaxModuleService = container.resolve(Modules.TAX);
+
+  const countries = ['hr', 'gb', 'de', 'dk', 'se', 'fr', 'es', 'it', 'ch'];
+  const paymentProviderId = 'pp_stripe_stripe';
+  const taxProviderId = 'tp_system';
 
   logger.info('Seeding store data...');
   const [store] = await storeModuleService.listStores();
@@ -82,19 +93,53 @@ export default async function seedDemoData({ container }: ExecArgs) {
   }
 
   logger.info('Seeding region data...');
-  const { result: regionResult } = await createRegionsWorkflow(container).run({
-    input: {
-      regions: [
-        {
-          name: 'Europe',
+  const [existingEuropeRegion] = await regionModuleService.listRegions(
+    {
+      name: 'Europe',
+    },
+    {
+      take: 1,
+    },
+  );
+
+  let region: RegionDTO;
+
+  if (existingEuropeRegion) {
+    const { result: updatedRegionResult } = await updateRegionsWorkflow(
+      container,
+    ).run({
+      input: {
+        selector: {
+          id: existingEuropeRegion.id,
+        },
+        update: {
           currency_code: 'eur',
           countries,
-          payment_providers: ['pp_stripe_stripe'],
+          payment_providers: [paymentProviderId],
+          automatic_taxes: true,
         },
-      ],
-    },
-  });
-  const region = regionResult[0];
+      },
+    });
+
+    region = updatedRegionResult[0];
+  } else {
+    const { result: regionResult } = await createRegionsWorkflow(container).run({
+      input: {
+        regions: [
+          {
+            name: 'Europe',
+            currency_code: 'eur',
+            countries,
+            payment_providers: [paymentProviderId],
+            automatic_taxes: true,
+          },
+        ],
+      },
+    });
+
+    region = regionResult[0];
+  }
+
   logger.info('Finished seeding regions.');
 
   await updateStoresWorkflow(container).run({
@@ -117,11 +162,48 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
 
   logger.info('Seeding tax regions...');
-  await createTaxRegionsWorkflow(container).run({
-    input: countries.map((country_code) => ({
-      country_code,
-    })),
-  });
+  const existingTaxRegions = await taxModuleService.listTaxRegions(
+    {
+      country_code: countries,
+    },
+    {
+      select: ['id', 'country_code', 'provider_id', 'parent_id'],
+      take: 100,
+    },
+  );
+
+  const parentTaxRegions = existingTaxRegions.filter(
+    (taxRegion) => !taxRegion.parent_id,
+  );
+  const existingTaxCountryCodes = new Set(
+    parentTaxRegions.map((taxRegion) => taxRegion.country_code.toLowerCase()),
+  );
+  const missingTaxCountries = countries.filter(
+    (countryCode) => !existingTaxCountryCodes.has(countryCode),
+  );
+
+  if (missingTaxCountries.length) {
+    await createTaxRegionsWorkflow(container).run({
+      input: missingTaxCountries.map((country_code) => ({
+        country_code,
+        provider_id: taxProviderId,
+      })),
+    });
+  }
+
+  const taxRegionsWithoutProvider = parentTaxRegions.filter(
+    (taxRegion) => !taxRegion.provider_id,
+  );
+
+  if (taxRegionsWithoutProvider.length) {
+    await taxModuleService.updateTaxRegions(
+      taxRegionsWithoutProvider.map((taxRegion) => ({
+        id: taxRegion.id,
+        provider_id: taxProviderId,
+      })),
+    );
+  }
+
   logger.info('Finished seeding tax regions.');
 
   logger.info('Seeding stock location data...');
@@ -153,155 +235,267 @@ export default async function seedDemoData({ container }: ExecArgs) {
   });
 
   logger.info('Seeding fulfillment data...');
-  const { result: shippingProfileResult } =
-    await createShippingProfilesWorkflow(container).run({
-      input: {
-        data: [
-          {
-            name: 'Default',
-            type: 'default',
-          },
+  let [shippingProfile] = await fulfillmentModuleService.listShippingProfiles(
+    {
+      name: 'Default',
+    },
+    {
+      take: 1,
+    },
+  );
+
+  if (!shippingProfile) {
+    const { result: shippingProfileResult } =
+      await createShippingProfilesWorkflow(container).run({
+        input: {
+          data: [
+            {
+              name: 'Default',
+              type: 'default',
+            },
+          ],
+        },
+      });
+    shippingProfile = shippingProfileResult[0];
+  }
+
+  let [fulfillmentSet] = await fulfillmentModuleService.listFulfillmentSets(
+    {
+      name: 'European Warehouse delivery',
+    },
+    {
+      take: 1,
+      relations: ['service_zones', 'service_zones.geo_zones'],
+    },
+  );
+  const hadExistingFulfillmentSet = Boolean(fulfillmentSet);
+
+  if (!fulfillmentSet) {
+    fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
+      name: 'European Warehouse delivery',
+      type: 'shipping',
+      service_zones: [
+        {
+          name: 'Europe',
+          geo_zones: countries.map((countryCode) => ({
+            country_code: countryCode,
+            type: 'country' as const,
+          })),
+        },
+      ],
+    });
+  } else {
+    const deliveryServiceZone = fulfillmentSet.service_zones[0];
+    const existingCountryCodes = new Set(
+      (deliveryServiceZone?.geo_zones ?? [])
+        .map((geoZone) =>
+          geoZone.type === 'country' && typeof geoZone.country_code === 'string'
+            ? geoZone.country_code.toLowerCase()
+            : null,
+        )
+        .filter((countryCode): countryCode is string => Boolean(countryCode)),
+    );
+    const missingCountriesForShipping = countries.filter(
+      (countryCode) => !existingCountryCodes.has(countryCode),
+    );
+
+    if (deliveryServiceZone && missingCountriesForShipping.length) {
+      await fulfillmentModuleService.updateServiceZones(deliveryServiceZone.id, {
+        geo_zones: [
+          ...deliveryServiceZone.geo_zones.map((geoZone) => ({ id: geoZone.id })),
+          ...missingCountriesForShipping.map((country_code) => ({
+            country_code,
+            type: 'country' as const,
+          })),
         ],
+      });
+
+      const [updatedFulfillmentSet] = await fulfillmentModuleService.listFulfillmentSets(
+        {
+          id: fulfillmentSet.id,
+        },
+        {
+          take: 1,
+          relations: ['service_zones'],
+        },
+      );
+
+      if (updatedFulfillmentSet) {
+        fulfillmentSet = updatedFulfillmentSet;
+      }
+    }
+  }
+
+  if (!hadExistingFulfillmentSet) {
+    await remoteLink.create({
+      [Modules.STOCK_LOCATION]: {
+        stock_location_id: stockLocation.id,
+      },
+      [Modules.FULFILLMENT]: {
+        fulfillment_set_id: fulfillmentSet.id,
       },
     });
-  const shippingProfile = shippingProfileResult[0];
+  }
 
-  const fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
-    name: 'European Warehouse delivery',
-    type: 'shipping',
-    service_zones: [
-      {
-        name: 'Europe',
-        geo_zones: [
-          {
-            country_code: 'hr',
-            type: 'country',
-          },
-          {
-            country_code: 'gb',
-            type: 'country',
-          },
-          {
-            country_code: 'de',
-            type: 'country',
-          },
-          {
-            country_code: 'dk',
-            type: 'country',
-          },
-          {
-            country_code: 'se',
-            type: 'country',
-          },
-          {
-            country_code: 'fr',
-            type: 'country',
-          },
-          {
-            country_code: 'es',
-            type: 'country',
-          },
-          {
-            country_code: 'it',
-            type: 'country',
-          },
-        ],
-      },
-    ],
-  });
-
-  await remoteLink.create({
-    [Modules.STOCK_LOCATION]: {
-      stock_location_id: stockLocation.id,
+  const deliveryServiceZoneId = fulfillmentSet.service_zones[0].id;
+  const existingDeliveryOptions = await fulfillmentModuleService.listShippingOptions(
+    {
+      name: ['Standard Shipping', 'Express Shipping', 'Poste Suisse'],
     },
-    [Modules.FULFILLMENT]: {
-      fulfillment_set_id: fulfillmentSet.id,
+    {
+      take: 100,
     },
-  });
+  );
+  const existingDeliveryOptionNames = new Set(
+    existingDeliveryOptions
+      .filter((option) => option.service_zone_id === deliveryServiceZoneId)
+      .map((option) => option.name),
+  );
 
-  await createShippingOptionsWorkflow(container).run({
-    input: [
-      {
-        name: 'Standard Shipping',
-        price_type: 'flat',
-        provider_id: 'manual_manual',
-        service_zone_id: fulfillmentSet.service_zones[0].id,
-        shipping_profile_id: shippingProfile.id,
-        type: {
-          label: 'Standard',
-          description: 'Ship in 2-3 days.',
-          code: 'standard',
-        },
-        prices: [
-          {
-            currency_code: 'usd',
-            amount: 10,
-          },
-          {
-            currency_code: 'eur',
-            amount: 10,
-          },
-          {
-            region_id: region.id,
-            amount: 10,
-          },
-        ],
-        rules: [
-          {
-            attribute: 'enabled_in_store',
-            value: '"true"',
-            operator: 'eq',
-          },
-          {
-            attribute: 'is_return',
-            value: 'false',
-            operator: 'eq',
-          },
-        ],
-      },
-      {
-        name: 'Express Shipping',
-        price_type: 'flat',
-        provider_id: 'manual_manual',
-        service_zone_id: fulfillmentSet.service_zones[0].id,
-        shipping_profile_id: shippingProfile.id,
-        type: {
-          label: 'Express',
-          description: 'Ship in 24 hours.',
-          code: 'express',
-        },
-        prices: [
-          {
-            currency_code: 'usd',
-            amount: 10,
-          },
-          {
-            currency_code: 'eur',
-            amount: 10,
-          },
-          {
-            region_id: region.id,
-            amount: 10,
-          },
-        ],
-        rules: [
-          {
-            attribute: 'enabled_in_store',
-            value: '"true"',
-            operator: 'eq',
-          },
-          {
-            attribute: 'is_return',
-            value: 'false',
-            operator: 'eq',
-          },
-        ],
-      },
-    ],
-  });
+  const deliveryOptionsToCreate = [];
 
-  const pickupFulfillmentSet =
-    await fulfillmentModuleService.createFulfillmentSets({
+  if (!existingDeliveryOptionNames.has('Standard Shipping')) {
+    deliveryOptionsToCreate.push({
+      name: 'Standard Shipping',
+      price_type: 'flat' as const,
+      provider_id: 'manual_manual',
+      service_zone_id: deliveryServiceZoneId,
+      shipping_profile_id: shippingProfile.id,
+      type: {
+        label: 'Standard',
+        description: 'Ship in 2-3 days.',
+        code: 'standard',
+      },
+      prices: [
+        {
+          currency_code: 'usd',
+          amount: 10,
+        },
+        {
+          currency_code: 'eur',
+          amount: 10,
+        },
+        {
+          region_id: region.id,
+          amount: 10,
+        },
+      ],
+      rules: [
+        {
+          attribute: 'enabled_in_store',
+          value: '"true"',
+          operator: 'eq',
+        },
+        {
+          attribute: 'is_return',
+          value: 'false',
+          operator: 'eq',
+        },
+      ],
+    });
+  }
+
+  if (!existingDeliveryOptionNames.has('Express Shipping')) {
+    deliveryOptionsToCreate.push({
+      name: 'Express Shipping',
+      price_type: 'flat' as const,
+      provider_id: 'manual_manual',
+      service_zone_id: deliveryServiceZoneId,
+      shipping_profile_id: shippingProfile.id,
+      type: {
+        label: 'Express',
+        description: 'Ship in 24 hours.',
+        code: 'express',
+      },
+      prices: [
+        {
+          currency_code: 'usd',
+          amount: 10,
+        },
+        {
+          currency_code: 'eur',
+          amount: 10,
+        },
+        {
+          region_id: region.id,
+          amount: 10,
+        },
+      ],
+      rules: [
+        {
+          attribute: 'enabled_in_store',
+          value: '"true"',
+          operator: 'eq',
+        },
+        {
+          attribute: 'is_return',
+          value: 'false',
+          operator: 'eq',
+        },
+      ],
+    });
+  }
+
+  if (!existingDeliveryOptionNames.has('Poste Suisse')) {
+    deliveryOptionsToCreate.push({
+      name: 'Poste Suisse',
+      price_type: 'flat' as const,
+      provider_id: 'manual_manual',
+      service_zone_id: deliveryServiceZoneId,
+      shipping_profile_id: shippingProfile.id,
+      type: {
+        label: 'Poste Suisse',
+        description: 'Livraison standard depuis la Suisse.',
+        code: 'poste-suisse',
+      },
+      prices: [
+        {
+          currency_code: 'usd',
+          amount: 7,
+        },
+        {
+          currency_code: 'eur',
+          amount: 7,
+        },
+        {
+          region_id: region.id,
+          amount: 7,
+        },
+      ],
+      rules: [
+        {
+          attribute: 'enabled_in_store',
+          value: '"true"',
+          operator: 'eq',
+        },
+        {
+          attribute: 'is_return',
+          value: 'false',
+          operator: 'eq',
+        },
+      ],
+    });
+  }
+
+  if (deliveryOptionsToCreate.length) {
+    await createShippingOptionsWorkflow(container).run({
+      input: deliveryOptionsToCreate,
+    });
+  }
+
+  let [pickupFulfillmentSet] = await fulfillmentModuleService.listFulfillmentSets(
+    {
+      name: 'Store pickup',
+    },
+    {
+      take: 1,
+      relations: ['service_zones'],
+    },
+  );
+  const hadExistingPickupFulfillmentSet = Boolean(pickupFulfillmentSet);
+
+  if (!pickupFulfillmentSet) {
+    pickupFulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
       name: 'Store pickup',
       type: 'pickup',
       service_zones: [
@@ -320,58 +514,77 @@ export default async function seedDemoData({ container }: ExecArgs) {
         },
       ],
     });
+  }
 
-  await remoteLink.create({
-    [Modules.STOCK_LOCATION]: {
-      stock_location_id: stockLocation.id,
-    },
-    [Modules.FULFILLMENT]: {
-      fulfillment_set_id: pickupFulfillmentSet.id,
-    },
-  });
-
-  await createShippingOptionsWorkflow(container).run({
-    input: [
-      {
-        name: 'Denmark Store Pickup',
-        price_type: 'flat',
-        provider_id: 'manual_manual',
-        service_zone_id: pickupFulfillmentSet.service_zones[0].id,
-        shipping_profile_id: shippingProfile.id,
-        type: {
-          label: 'Denmark Store Pickup',
-          description: 'Free in-store pickup.',
-          code: 'standard',
-        },
-        prices: [
-          {
-            currency_code: 'usd',
-            amount: 0,
-          },
-          {
-            currency_code: 'eur',
-            amount: 0,
-          },
-          {
-            region_id: region.id,
-            amount: 0,
-          },
-        ],
-        rules: [
-          {
-            attribute: 'enabled_in_store',
-            value: '"true"',
-            operator: 'eq',
-          },
-          {
-            attribute: 'is_return',
-            value: 'false',
-            operator: 'eq',
-          },
-        ],
+  if (!hadExistingPickupFulfillmentSet) {
+    await remoteLink.create({
+      [Modules.STOCK_LOCATION]: {
+        stock_location_id: stockLocation.id,
       },
-    ],
-  });
+      [Modules.FULFILLMENT]: {
+        fulfillment_set_id: pickupFulfillmentSet.id,
+      },
+    });
+  }
+
+  const pickupServiceZoneId = pickupFulfillmentSet.service_zones[0].id;
+  const existingPickupOption = await fulfillmentModuleService.listShippingOptions(
+    {
+      name: 'Denmark Store Pickup',
+    },
+    {
+      take: 20,
+    },
+  );
+
+  if (
+    !existingPickupOption.some(
+      (option) => option.service_zone_id === pickupServiceZoneId,
+    )
+  ) {
+    await createShippingOptionsWorkflow(container).run({
+      input: [
+        {
+          name: 'Denmark Store Pickup',
+          price_type: 'flat',
+          provider_id: 'manual_manual',
+          service_zone_id: pickupServiceZoneId,
+          shipping_profile_id: shippingProfile.id,
+          type: {
+            label: 'Denmark Store Pickup',
+            description: 'Free in-store pickup.',
+            code: 'standard',
+          },
+          prices: [
+            {
+              currency_code: 'usd',
+              amount: 0,
+            },
+            {
+              currency_code: 'eur',
+              amount: 0,
+            },
+            {
+              region_id: region.id,
+              amount: 0,
+            },
+          ],
+          rules: [
+            {
+              attribute: 'enabled_in_store',
+              value: '"true"',
+              operator: 'eq',
+            },
+            {
+              attribute: 'is_return',
+              value: 'false',
+              operator: 'eq',
+            },
+          ],
+        },
+      ],
+    });
+  }
 
   logger.info('Finished seeding fulfillment data.');
 

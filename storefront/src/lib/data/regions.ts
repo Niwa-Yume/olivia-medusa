@@ -7,7 +7,7 @@ export const listRegions = async function () {
   return sdk.client
     .fetch<{ regions: HttpTypes.StoreRegion[] }>(`/store/regions`, {
       method: "GET",
-      next: { tags: ["regions"] },
+      next: { tags: ["regions"], revalidate: 300 },
       cache: "force-cache",
     })
     .then(({ regions }) => regions)
@@ -18,7 +18,7 @@ export const retrieveRegion = async function (id: string) {
   return sdk.client
     .fetch<{ region: HttpTypes.StoreRegion }>(`/store/regions/${id}`, {
       method: "GET",
-      next: { tags: [`regions`] },
+      next: { tags: [`regions`], revalidate: 300 },
       cache: "force-cache",
     })
     .then(({ region }) => region)
@@ -29,8 +29,10 @@ const regionMap = new Map<string, HttpTypes.StoreRegion>()
 
 export const getRegion = async function (countryCode: string) {
   try {
-    if (regionMap.has(countryCode)) {
-      return regionMap.get(countryCode)
+    const normalizedCountryCode = countryCode.toLowerCase()
+
+    if (regionMap.has(normalizedCountryCode)) {
+      return regionMap.get(normalizedCountryCode)
     }
 
     const regions = await listRegions()
@@ -45,11 +47,12 @@ export const getRegion = async function (countryCode: string) {
       })
     })
 
-    const region = countryCode
-      ? regionMap.get(countryCode)
-      : regionMap.get("us")
+    const fallbackRegion =
+      regionMap.get(normalizedCountryCode) ??
+      regionMap.get("ch") ??
+      regionMap.values().next().value
 
-    return region
+    return fallbackRegion ?? null
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return null

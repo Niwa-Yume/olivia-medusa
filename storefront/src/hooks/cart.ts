@@ -6,6 +6,7 @@ import {
   getPaymentMethod,
   initiatePaymentSession,
   placeOrder,
+  recreateCheckoutCart,
   retrieveCart,
   setAddresses,
   setEmail,
@@ -49,11 +50,12 @@ export const useCartQuantity = () => {
 
 export const useCartShippingMethods = (cartId: string) => {
   return useQuery({
-    queryKey: [cartId],
+    queryKey: ["shipping-options", cartId],
     queryFn: async () => {
       const res = await listCartShippingMethods(cartId)
       return res
     },
+    enabled: Boolean(cartId),
   })
 }
 
@@ -475,6 +477,36 @@ export const useSetShippingAddress = (
       await queryClient.invalidateQueries({
         exact: false,
         queryKey: ["cart"],
+      })
+      await queryClient.invalidateQueries({
+        exact: false,
+        queryKey: ["shipping-options"],
+      })
+
+      await options?.onSuccess?.(...args)
+    },
+  })
+}
+
+export const useRecreateCheckoutCart = (
+  options?: UseMutationOptions<void, Error, { countryCode: string }, unknown>
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationKey: ["recreate-checkout-cart"],
+    mutationFn: async ({ countryCode }) => {
+      await recreateCheckoutCart(countryCode)
+    },
+    ...options,
+    async onSuccess(...args) {
+      await queryClient.invalidateQueries({
+        exact: false,
+        queryKey: ["cart"],
+      })
+      await queryClient.invalidateQueries({
+        exact: false,
+        queryKey: ["shipping-options"],
       })
 
       await options?.onSuccess?.(...args)

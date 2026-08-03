@@ -85,6 +85,8 @@ async function getCountryCode(
       countryCode = urlCountryCode
     } else if (vercelCountryCode && regionMap.has(vercelCountryCode)) {
       countryCode = vercelCountryCode
+    } else if (regionMap.has("ch")) {
+      countryCode = "ch"
     } else if (regionMap.has(DEFAULT_REGION)) {
       countryCode = DEFAULT_REGION
     } else if (regionMap.keys().next().value) {
@@ -121,8 +123,20 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  const pathname = request.nextUrl.pathname
+  const segments = pathname.split("/")
+  const firstSegment = segments[1]?.toLowerCase()
+  const hasCountryLikePrefix =
+    Boolean(firstSegment) &&
+    /^[a-z]{2}$/.test(firstSegment) &&
+    !regionMap.has(firstSegment)
+
+  const cleanedPathname = hasCountryLikePrefix
+    ? `/${segments.slice(2).join("/")}`.replace(/\/+$/, "")
+    : pathname
+
   const redirectPath =
-    request.nextUrl.pathname === "/" ? "" : request.nextUrl.pathname
+    cleanedPathname === "/" || cleanedPathname === "" ? "" : cleanedPathname
 
   const queryString = request.nextUrl.search ? request.nextUrl.search : ""
 

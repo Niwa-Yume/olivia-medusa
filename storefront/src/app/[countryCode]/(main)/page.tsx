@@ -1,7 +1,6 @@
 import { Metadata } from "next"
 import Image from "next/image"
 import { HttpTypes } from "@medusajs/types"
-import { getRegion } from "@lib/data/regions"
 import { getProductsList } from "@lib/data/products"
 import { getProductPrice } from "@lib/util/get-product-price"
 import { LocalizedLink } from "@/components/LocalizedLink"
@@ -63,11 +62,6 @@ export default async function Home({
   params: Promise<{ countryCode: string }>
 }) {
   const { countryCode } = await params
-  const region = await getRegion(countryCode)
-
-  if (!region) {
-    return null
-  }
 
   const latestProductsResult = await getProductsList({
     countryCode,

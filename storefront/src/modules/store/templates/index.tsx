@@ -7,7 +7,6 @@ import { SortOptions } from "@modules/store/components/refinement-list/sort-prod
 import { getCategoriesList } from "@lib/data/categories"
 import { getProductTypesList } from "@lib/data/product-types"
 import PaginatedProducts from "@modules/store/templates/paginated-products"
-import { getRegion } from "@lib/data/regions"
 import Image from "next/image"
 
 const normalizeLabel = (value: string) =>
@@ -41,10 +40,9 @@ const StoreTemplate = async ({
 }) => {
   const pageNumber = page ? parseInt(page, 10) : 1
 
-  const [categories, types, region] = await Promise.all([
+  const [categories, types] = await Promise.all([
     getCategoriesList(0, 100, ["id", "name", "handle"]),
     getProductTypesList(0, 100, ["id", "value"]),
-    getRegion(countryCode),
   ])
 
   const effectiveType = forcedType
@@ -213,22 +211,20 @@ const StoreTemplate = async ({
       {/* Products grid */}
       <div className="px-4 py-12 md:py-16 md:pb-28 max-w-6xl mx-auto">
         <Suspense fallback={<SkeletonProductGrid />}>
-          {region && (
-            <PaginatedProducts
-              sortBy={sortBy}
-              page={pageNumber}
-              countryCode={countryCode}
-              productsIds={hasUnknownForcedType ? [] : undefined}
-              typeId={matchedTypeIds?.length ? matchedTypeIds : undefined}
-              categoryId={
-                !categoryHandlesToFilter
-                  ? undefined
-                  : visibleCategories
-                      .filter((c) => categoryHandlesToFilter.includes(c.handle))
-                      .map((c) => c.id)
-              }
-            />
-          )}
+          <PaginatedProducts
+            sortBy={sortBy}
+            page={pageNumber}
+            countryCode={countryCode}
+            productsIds={hasUnknownForcedType ? [] : undefined}
+            typeId={matchedTypeIds?.length ? matchedTypeIds : undefined}
+            categoryId={
+              !categoryHandlesToFilter
+                ? undefined
+                : visibleCategories
+                    .filter((c) => categoryHandlesToFilter.includes(c.handle))
+                    .map((c) => c.id)
+            }
+          />
         </Suspense>
       </div>
     </div>

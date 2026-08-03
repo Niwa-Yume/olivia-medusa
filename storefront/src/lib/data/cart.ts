@@ -433,3 +433,31 @@ export async function updateRegion(countryCode: string, currentPath: string) {
 
   redirect(`/${countryCode}${currentPath}`)
 }
+
+export async function recreateCheckoutCart(countryCode: unknown) {
+  if (typeof countryCode !== "string") {
+    throw new Error("Invalid country code")
+  }
+
+  const normalizedCountryCode = countryCode.toLowerCase()
+  const region =
+    (await getRegion(normalizedCountryCode)) ?? (await getRegion("ch"))
+
+  if (!region) {
+    throw new Error("No region available to recreate cart")
+  }
+
+  await removeCartId()
+
+  const { cart } = await sdk.store.cart.create(
+    { region_id: region.id },
+    {},
+    await getAuthHeaders()
+  )
+
+  await setCartId(cart.id)
+  revalidateTag("cart")
+  revalidateTag("shipping")
+
+  return cart
+}

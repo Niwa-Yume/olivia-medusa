@@ -1,6 +1,6 @@
 "use client"
 
-import { useElements, useStripe } from "@stripe/react-stripe-js"
+import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import * as React from "react"
 import { HttpTypes } from "@medusajs/types"
 
@@ -74,7 +74,7 @@ const StripeCardPaymentButton = ({
 }) => {
   const stripe = useStripe()
   const elements = useElements()
-  const card = elements?.getElement("card")
+  const card = elements?.getElement(CardElement)
 
   const router = useRouter()
 
@@ -85,44 +85,43 @@ const StripeCardPaymentButton = ({
   )
   const pathname = usePathname()
 
-  const initiatePaymentSession = useInitiatePaymentSession()
-
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
-      const shouldInputCard = !session
+      if (!session || !isStripe(session.provider_id)) {
+        setError("Stripe payment session is missing. Please reselect Credit card.")
+        return
+      }
 
-      if (!isStripe(session?.provider_id)) {
-        await initiatePaymentSession.mutateAsync({ providerId: "stripe" })
+      if (!stripe || !card) {
+        setError("Card input is not ready. Please refresh and try again.")
+        return
       }
-      if (!shouldInputCard) {
-        if (card) {
-          const token = await stripe?.createToken(card, {
-            name:
-              cart.billing_address?.first_name +
-              " " +
-              cart.billing_address?.last_name,
-            address_line1: cart.billing_address?.address_1 ?? undefined,
-            address_line2: cart.billing_address?.address_2 ?? undefined,
-            address_city: cart.billing_address?.city ?? undefined,
-            address_country: cart.billing_address?.country_code ?? undefined,
-            address_zip: cart.billing_address?.postal_code ?? undefined,
-            address_state: cart.billing_address?.province ?? undefined,
-          })
-          if (token) {
-            await setPaymentMethod.mutateAsync({
-              sessionId: session.id,
-              token: token.token?.id,
-            })
-          }
-        }
-        return router.push(
-          pathname + "?" + createQueryString("step", "review"),
-          {
-            scroll: false,
-          }
-        )
+
+      const tokenResult = await stripe.createToken(card, {
+        name:
+          cart.billing_address?.first_name + " " + cart.billing_address?.last_name,
+        address_line1: cart.billing_address?.address_1 ?? undefined,
+        address_line2: cart.billing_address?.address_2 ?? undefined,
+        address_city: cart.billing_address?.city ?? undefined,
+        address_country: cart.billing_address?.country_code ?? undefined,
+        address_zip: cart.billing_address?.postal_code ?? undefined,
+        address_state: cart.billing_address?.province ?? undefined,
+      })
+
+      if (tokenResult.error || !tokenResult.token?.id) {
+        setError(tokenResult.error?.message || "Invalid card details.")
+        return
       }
+
+      await setPaymentMethod.mutateAsync({
+        sessionId: session.id,
+        token: tokenResult.token.id,
+      })
+
+      return router.push(pathname + "?" + createQueryString("step", "review"), {
+        scroll: false,
+      })
     } catch (err) {
       setError(err instanceof Error ? err.message : `${err}`)
     } finally {

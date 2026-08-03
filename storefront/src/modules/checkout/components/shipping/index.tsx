@@ -12,7 +12,11 @@ import {
   UiRadioGroup,
   UiRadioLabel,
 } from "@/components/ui/Radio"
-import { useCartShippingMethods, useSetShippingMethod } from "hooks/cart"
+import {
+  useCartShippingMethods,
+  useRecreateCheckoutCart,
+  useSetShippingMethod,
+} from "hooks/cart"
 import { StoreCart } from "@medusajs/types"
 
 const Shipping = ({ cart }: { cart: StoreCart }) => {
@@ -23,10 +27,15 @@ const Shipping = ({ cart }: { cart: StoreCart }) => {
   const pathname = usePathname()
 
   const isOpen = searchParams.get("step") === "shipping"
+  const pathCountryCode = pathname.split("/")[1]?.toLowerCase() || "ch"
+  const shippingAddressCountryCode =
+    cart.shipping_address?.country_code?.toLowerCase() || pathCountryCode
 
   const { data: availableShippingMethods } = useCartShippingMethods(cart.id)
 
   const { mutate, isPending } = useSetShippingMethod({ cartId: cart.id })
+  const { mutate: recreateCart, isPending: isRecreatingCart } =
+    useRecreateCheckoutCart()
   const selectedShippingMethod = availableShippingMethods?.find(
     (method) => method.id === cart.shipping_methods?.[0]?.shipping_option_id
   )
@@ -45,6 +54,22 @@ const Shipping = ({ cart }: { cart: StoreCart }) => {
   useEffect(() => {
     setError(null)
   }, [isOpen])
+
+  const handleRepairCheckout = () => {
+    setError(null)
+    recreateCart(
+      { countryCode: shippingAddressCountryCode },
+      {
+        onSuccess: () => {
+          router.refresh()
+          router.push(`/${shippingAddressCountryCode}/checkout?step=shipping`, {
+            scroll: false,
+          })
+        },
+        onError: (err) => setError(err.message),
+      }
+    )
+  }
 
   return (
     <>
@@ -74,12 +99,20 @@ const Shipping = ({ cart }: { cart: StoreCart }) => {
           )}
       </div>
       {isOpen ? (
-        availableShippingMethods?.length === 0 ? (
+        !availableShippingMethods || availableShippingMethods.length === 0 ? (
           <div>
             <p className="text-red-900">
               There are no shipping methods available for your location. Please
               contact us for further assistance.
             </p>
+            <Button
+              className="mt-4"
+              onPress={handleRepairCheckout}
+              isLoading={isRecreatingCart}
+            >
+              Refresh checkout cart
+            </Button>
+            <ErrorMessage error={error} />
           </div>
         ) : (
           <div>

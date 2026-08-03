@@ -1,6 +1,7 @@
 "use server"
 
 import { sdk } from "@lib/config"
+import { getRegion } from "@lib/data/regions"
 import { HttpTypes } from "@medusajs/types"
 import { SortOptions } from "@modules/store/components/refinement-list/sort-products"
 import { sortProducts } from "@lib/util/sort-products"
@@ -95,7 +96,7 @@ export const getProductsList = async function ({
   const page = Math.max(1, pageParam || 1)
   const limit = queryParams?.limit || 12
   const offset = (page - 1) * limit
-  void countryCode
+  const region = await getRegion(countryCode)
 
   const productList = await sdk.client.fetch<{
     products: HttpTypes.StoreProduct[]
@@ -104,7 +105,8 @@ export const getProductsList = async function ({
     query: {
       limit,
       offset,
-      fields: "*variants.calculated_price",
+      fields: "*variants.calculated_price,+variants.inventory_quantity",
+      ...(region?.id ? { region_id: region.id } : {}),
       ...queryParams,
     } satisfies HttpTypes.StoreProductListParams,
     next: { tags: ["products"] },
