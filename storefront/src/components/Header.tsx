@@ -46,6 +46,7 @@ export const Header: React.FC = async () => {
                 <LocalizedLink href="/vetements">Vêtements</LocalizedLink>
                 <LocalizedLink href="/accessoires">Accessoires</LocalizedLink>
                 <LocalizedLink href="/bijoux">Bijoux</LocalizedLink>
+                <LocalizedLink href="/services">Services</LocalizedLink>
                 <LocalizedLink href="/about">FAQ</LocalizedLink>
                 <LocalizedLink href="/contact">Contact</LocalizedLink>
               </div>
@@ -65,3 +66,6 @@ export const Header: React.FC = async () => {
     </>
   )
 }
+
+
+

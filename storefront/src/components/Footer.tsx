@@ -33,15 +33,20 @@ export const Footer: React.FC = () => {
                 </p>
               </div>
               <div className="flex gap-10 xl:gap-18 max-md:text-xs flex-1 justify-between lg:justify-center">
-                <ul className="flex flex-col gap-6 md:gap-3.5">
+                 <ul className="flex flex-col gap-6 md:gap-3.5">
                   <li>
-                    <LocalizedLink href="/">FAQ</LocalizedLink>
+                    <a
+                      href="https://www.tiktok.com/@olivia.prcn?_r=1&_t=ZN-98JNglI44j0"
+                      target="_blank"
+                    >
+                      TikTok
+                    </a>
                   </li>
                 </ul>
                 <ul className="flex flex-col gap-6 md:gap-3.5">
                   <li>
                     <a
-                      href="https://www.instagram.com/agiloltd/"
+                      href="https://www.instagram.com/creations.procaccini"
                       target="_blank"
                     >
                       Instagram
@@ -51,10 +56,10 @@ export const Footer: React.FC = () => {
                 <ul className="flex flex-col gap-6 md:gap-3.5">
                   <li>
                     <a
-                      href="https://www.facebook.com"
+                      href="https://youtube.com/@oliviaprcn23?si=hKftu_y9eg2dhMVo"
                       target="_blank"
                     >
-                      Facebook
+                      YouTube
                     </a>
                   </li>
                 </ul>
