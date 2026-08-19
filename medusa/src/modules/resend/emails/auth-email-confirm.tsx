@@ -13,7 +13,7 @@ export default function AuthEmailConfirm({
         Verify your email
       </Heading>
       <Text className="text-md !mb-10">
-        Hey Jovana, thanks for registering for an account on Sofa Society!
+        Hey Jovana, thanks for registering for an account on Oprocaccini!
       </Text>
       <Text className="text-md !mb-10">
         Before we get started, we just need to confirm that this is you.

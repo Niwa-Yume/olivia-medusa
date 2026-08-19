@@ -23,7 +23,7 @@ export default function AuthPasswordForgotResetEmail({
         Reset your password
       </Heading>
       <Text className="text-md !mb-10">
-        We received a request to reset your Sofa Society account password. Click
+        We received a request to reset your Oprocaccini account password. Click
         below to set a new password:
       </Text>
       <Button

@@ -46,10 +46,10 @@ export default function WelcomeEmail({
   return (
     <EmailLayout {...emailLayoutProps}>
       <Heading className="text-2xl mt-0 mb-10 font-medium">
-        Welcome to Sofa Society!
+        Welcome to Oprocaccini!
       </Heading>
       <Text className="text-md !mb-8">
-        Welcome to Sofa Society! We're excited to have you join our community of
+        Welcome to Oprocaccini! We're excited to have you join our community of
         comfort enthusiasts. With our carefully crafted sofas, you&apos;re just
         steps away from adding elegance and coziness to your living space.
       </Text>
@@ -73,7 +73,7 @@ export default function WelcomeEmail({
       <Text className="text-md">
         Best wishes,
         <br />
-        The Sofa Society Team
+        The Oprocaccini Team
       </Text>
     </EmailLayout>
   );

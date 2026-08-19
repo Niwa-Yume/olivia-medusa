@@ -36,6 +36,7 @@ export default class ResendNotificationProviderService extends AbstractNotificat
     }
 
     const layoutOptions: EmailLayoutProps = {};
+    this.logger = logger;
 
     if ('siteTitle' in options && typeof options.siteTitle === 'string') {
       layoutOptions.siteTitle = options.siteTitle;
@@ -62,7 +63,6 @@ export default class ResendNotificationProviderService extends AbstractNotificat
 
     this.resendClient = new Resend(options.api_key);
     this.from = options.from;
-    this.logger = logger;
     this.layoutOptions = layoutOptions;
   }
 

@@ -203,42 +203,6 @@ export default async function fixChFrBeCheckout({ container }: ExecArgs) {
     },
   });
 
-  logger.info('Keeping one shipping profile...');
-  let [shippingProfile] = await fulfillmentModuleService.listShippingProfiles(
-    { name: 'Default' },
-    { take: 1 },
-  );
-  if (!shippingProfile) {
-    const { result } = await createShippingProfilesWorkflow(container).run({
-      input: {
-        data: [{ name: 'Default', type: 'default' }],
-      },
-    });
-    shippingProfile = result[0];
-  }
-
-  const allShippingProfiles = await fulfillmentModuleService.listShippingProfiles(
-    {},
-    { take: 100 },
-  );
-  const extraProfileIds = allShippingProfiles
-    .filter((profile) => profile.id !== shippingProfile.id)
-    .map((profile) => profile.id);
-  if (extraProfileIds.length) {
-    await fulfillmentModuleService.deleteShippingProfiles(extraProfileIds);
-  }
-
-  logger.info('Resetting shipping methods...');
-  const existingShippingOptions = await fulfillmentModuleService.listShippingOptions(
-    {},
-    { take: 500 },
-  );
-  if (existingShippingOptions.length) {
-    await fulfillmentModuleService.deleteShippingOptions(
-      existingShippingOptions.map((option) => option.id),
-    );
-  }
-
   const shippingSets = await fulfillmentModuleService.listFulfillmentSets(
     { type: 'shipping' },
     { relations: ['service_zones', 'service_zones.geo_zones'], take: 100 },
@@ -283,27 +247,124 @@ export default async function fixChFrBeCheckout({ container }: ExecArgs) {
     });
   }
 
-  await createShippingOptionsWorkflow(container).run({
-    input: [
-      {
-        name: 'Poste Suisse',
-        price_type: 'flat',
-        provider_id: 'manual_manual',
-        service_zone_id: serviceZone.id,
-        shipping_profile_id: shippingProfile.id,
-        type: {
-          label: 'Poste Suisse',
-          description: 'Livraison standard CH / FR / BE',
-          code: 'poste-suisse',
-        },
-        prices: [
-          { currency_code: 'eur', amount: 7 },
-          { currency_code: 'usd', amount: 7 },
-          { region_id: regionId, amount: 7 },
-        ],
+  logger.info('Ensuring shipping profiles have CH/FR/BE methods...');
+  let shippingProfiles = await fulfillmentModuleService.listShippingProfiles(
+    {},
+    { take: 100 },
+  );
+
+  if (!shippingProfiles.length) {
+    const { result } = await createShippingProfilesWorkflow(container).run({
+      input: {
+        data: [{ name: 'Default', type: 'default' }],
       },
-    ],
-  });
+    });
+    shippingProfiles = result;
+  }
+
+  const existingShippingOptions = await fulfillmentModuleService.listShippingOptions(
+    {},
+    { take: 500 },
+  );
+  const shippingOptionsToCreate = shippingProfiles
+    .filter(
+      (profile) =>
+        !existingShippingOptions.some(
+          (option) =>
+            option.service_zone_id === serviceZone.id &&
+            option.shipping_profile_id === profile.id &&
+            option.name === 'Poste Suisse',
+        ),
+    )
+    .map((profile) => ({
+      name: 'Poste Suisse',
+      price_type: 'flat' as const,
+      provider_id: 'manual_manual',
+      service_zone_id: serviceZone.id,
+      shipping_profile_id: profile.id,
+      type: {
+        label: 'Poste Suisse',
+        description: 'Livraison standard CH / FR / BE',
+        code: 'poste-suisse',
+      },
+      prices: [
+        { currency_code: 'eur', amount: 7 },
+        { currency_code: 'usd', amount: 7 },
+        { region_id: regionId, amount: 7 },
+      ],
+    }));
+
+  if (shippingOptionsToCreate.length) {
+    await createShippingOptionsWorkflow(container).run({
+      input: shippingOptionsToCreate,
+    });
+  }
+
+  const { data: fulfillmentSetLinks } = await query.graph({
+    entity: 'location_fulfillment_set',
+    fields: ['stock_location_id', 'fulfillment_set_id'],
+    filters: { stock_location_id: stockLocation.id, fulfillment_set_id: shippingSet.id },
+  })
+
+  if (!fulfillmentSetLinks.length) {
+    await remoteLink.create({
+      [Modules.STOCK_LOCATION]: {
+        stock_location_id: stockLocation.id,
+      },
+      [Modules.FULFILLMENT]: {
+        fulfillment_set_id: shippingSet.id,
+      },
+    })
+  }
+
+  const { data: providerLinks } = await query.graph({
+    entity: 'location_fulfillment_provider',
+    fields: ['stock_location_id', 'fulfillment_provider_id'],
+    filters: {
+      stock_location_id: stockLocation.id,
+      fulfillment_provider_id: 'manual_manual',
+    },
+  })
+
+  if (!providerLinks.length) {
+    await remoteLink.create({
+      [Modules.STOCK_LOCATION]: {
+        stock_location_id: stockLocation.id,
+      },
+      [Modules.FULFILLMENT]: {
+        fulfillment_provider_id: 'manual_manual',
+      },
+    })
+  }
+
+  const defaultShippingProfile =
+    shippingProfiles.find((profile) => profile.name === 'Default') ??
+    shippingProfiles[0]
+
+  const products = await productModuleService.listProducts(
+    {},
+    { take: 2000, select: ['id'] },
+  )
+  const { data: defaultProfileLinks } = await query.graph({
+    entity: 'product_shipping_profile',
+    fields: ['product_id', 'shipping_profile_id'],
+    filters: { shipping_profile_id: defaultShippingProfile.id },
+  })
+  const linkedProductIds = new Set(defaultProfileLinks.map((link) => link.product_id))
+  const productsToLink = products.filter((product) => !linkedProductIds.has(product.id))
+
+  if (productsToLink.length) {
+    await remoteLink.create(
+      productsToLink.map((product) => ({
+        [Modules.PRODUCT]: {
+          product_id: product.id,
+        },
+        [Modules.FULFILLMENT]: {
+          shipping_profile_id: defaultShippingProfile.id,
+        },
+      })),
+    )
+  }
 
   logger.info('Fixing variant inventory to 100...');
   const variants = await productModuleService.listProductVariants(

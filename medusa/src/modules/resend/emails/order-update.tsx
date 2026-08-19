@@ -39,7 +39,7 @@ export default function OrderUpdateEmail({
         Order details
       </Button>
       <Text className="text-md m-0">
-        Thank you for choosing Sofa Society. We&apos;re excited for your new
+        Thank you for choosing Oprocaccini. We&apos;re excited for your new
         sofa to find its home with you!
       </Text>
     </EmailLayout>

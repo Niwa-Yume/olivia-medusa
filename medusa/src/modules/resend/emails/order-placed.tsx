@@ -93,7 +93,7 @@ export default function OrderPlacedEmail({
       </Text>
       <Text className="text-md !mb-6">
         You&apos;ll receive another update once your order is shipped. For any
-        questions, feel free to contact us at info@sofasociety.com.
+        questions, feel free to contact us at contact@oprocaccini.ch.
       </Text>
       <Text className="text-md !mb-20">Thank you for shopping with us!</Text>
       <Section className="mb-6">
