@@ -142,8 +142,9 @@ export default function ServicesPage() {
 
             <p className="text-sm text-grayscale-500 leading-relaxed max-w-135">
               Après 3 mois de cours, une attestation d&apos;acquisition de
-              compétences en crochet est remise à l&apos;élève.<br></br>
-			  Pour un cours ponctuel, le tarif s'élève à 25 francs de l'heure.
+              compétences en crochet est remise à l&apos;élève.<br />
+              Pour un cours ponctuel, le tarif s&apos;élève à 25 francs de
+              l&apos;heure.
             </p>
           </LayoutColumn>
 

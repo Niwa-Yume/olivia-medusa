@@ -23,7 +23,7 @@ export function FaqAccordion({ items }: FaqAccordionProps) {
       {items.map((item, index) => {
         const isOpen = openIndex === index
         return (
-          <div key={index}>
+          <div key={`${item.question}-${item.answer}`}>
             <button
               onClick={() => toggle(index)}
               className="w-full flex items-center justify-between py-5 md:py-6 text-left gap-4 group"
@@ -76,4 +76,3 @@ export function FaqAccordion({ items }: FaqAccordionProps) {
     </div>
   )
 }
-

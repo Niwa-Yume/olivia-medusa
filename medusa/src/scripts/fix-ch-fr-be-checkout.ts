@@ -22,10 +22,7 @@ import {
 } from '@medusajs/framework/types';
 import { ContainerRegistrationKeys, Modules } from '@medusajs/framework/utils';
 
-type QueryGraphResultRow = {
-  variant_id: string;
-  inventory_item_id: string;
-};
+type QueryGraphResultRow = Record<string, string>;
 
 type QueryService = {
   graph: (
