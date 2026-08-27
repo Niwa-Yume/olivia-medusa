@@ -58,7 +58,7 @@ export default function FaqPage() {
       {/* Hero bannière mint */}
       <div
         className="w-full flex flex-col items-center justify-center py-20 md:py-32 px-6 text-center"
-        style={{ backgroundColor: "#F2BBBE" }}
+        style={{ backgroundColor: "#F9DEDF" }}
       >
         <p
           className="text-xs md:text-sm uppercase tracking-[0.2em] font-medium mb-4"
@@ -81,7 +81,7 @@ export default function FaqPage() {
       </div>
 
       {/* Contenu accordion */}
-      <div className="pt-12 pb-24 md:pt-20 md:pb-36" style={{ backgroundColor: "#C4FDFB" }}>
+      <div className="pt-12 pb-24 md:pt-20 md:pb-36" style={{ backgroundColor: "#DBFEFD" }}>
         <div className="max-w-2xl mx-auto px-6">
           <FaqAccordion items={faqItems} />
 
