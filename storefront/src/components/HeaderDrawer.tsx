@@ -6,7 +6,6 @@ import { Icon } from "@/components/Icon"
 import { Drawer } from "@/components/Drawer"
 import { LocalizedLink } from "@/components/LocalizedLink"
 // import { RegionSwitcher } from "@/components/RegionSwitcher"
-import { SearchField } from "@/components/SearchField"
 import { useSearchParams } from "next/navigation"
 
 export const HeaderDrawer: React.FC<{
@@ -15,7 +14,7 @@ export const HeaderDrawer: React.FC<{
     region: string
     label: string | undefined
   }[]
-}> = ({ countryOptions }) => {
+}> = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
   const searchParams = useSearchParams()
@@ -44,11 +43,7 @@ export const HeaderDrawer: React.FC<{
         {({ close }) => (
           <>
             <div className="flex flex-col text-white h-full">
-              <div className="flex items-center justify-between pb-6 mb-8 pt-5 w-full border-b border-white px-8">
-                <SearchField
-                  countryOptions={countryOptions}
-                  isInputAlwaysShown
-                />
+              <div className="flex items-center justify-end pb-6 mb-8 pt-5 w-full border-b border-white px-8">
                 <button onClick={close} aria-label="Close menu">
                   <Icon name="close" className="w-6" />
                 </button>

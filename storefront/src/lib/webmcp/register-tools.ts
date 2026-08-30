@@ -5,7 +5,6 @@ import {
   navigateToCartTool,
   navigateToProductTool,
 } from "./tools/checkout"
-import { productsSearchTool } from "./tools/products-search"
 import { cartManageTool } from "./tools/cart"
 import { WebMCPClient } from "./types"
 import { applyPromotionTool, removePromotionTool } from "./tools/promotion"
@@ -55,7 +54,6 @@ export const registerWebMCPTools = (router?: AppRouterInstance) => {
     }
 
     const tools: RegisterableWebMCPTool[] = [
-      productsSearchTool,
       navigateToProductTool,
       navigateToCartTool,
       cartManageTool,

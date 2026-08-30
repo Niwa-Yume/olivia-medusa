@@ -1,6 +1,5 @@
 import * as React from "react"
 import { listRegions } from "@lib/data/regions"
-// import { SearchField } from "@/components/SearchField"
 import { Layout, LayoutColumn } from "@/components/Layout"
 import { LocalizedLink } from "@/components/LocalizedLink"
 import { HeaderDrawer } from "@/components/HeaderDrawer"
