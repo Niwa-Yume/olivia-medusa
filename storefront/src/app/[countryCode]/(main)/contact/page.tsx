@@ -146,7 +146,7 @@ export default function ContactPage() {
                 {[
                   { emoji: "📍", label: "Localisation", value: "Genève, Suisse" },
                   { emoji: "⏱", label: "Délai de réponse", value: "24 à 48h en semaine" },
-                  { emoji: "🌐", label: "Langues", value: "Français · Anglais" },
+                  { emoji: "🌐", label: "Langues", value: "Français · Anglais · Italien" },
                 ].map((info) => (
                   <div key={info.label} className="flex items-start gap-3">
                     <span className="text-lg">{info.emoji}</span>
