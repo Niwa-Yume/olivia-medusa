@@ -80,27 +80,35 @@ export default async function Home({
         🌿 Cousu main à Genève · Éditions limitées · Livraison Suisse
       </div>
 
-      <section className="relative overflow-hidden bg-brand-mint px-4 py-16 md:py-24">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
-          <p className="text-[30vw] leading-none font-serif italic text-black/10">OP</p>
-        </div>
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <p className="text-xs md:text-sm uppercase tracking-[0.25em] mb-6" style={{ color: "var(--color-text-muted)" }}>
-            ✨ Cousu main · Genève
-          </p>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif italic leading-tight mb-6" style={{ color: "var(--color-text)" }}>
-            Pièces uniques pour un style <span className="not-italic">qui vous ressemble</span>
-          </h1>
-          <p className="max-w-2xl mx-auto text-sm md:text-base mb-8" style={{ color: "var(--color-text-muted)" }}>
-            Des créations haute couture en éditions limitées, pensées et assemblées avec soin. Chaque pièce porte une histoire, la vôtre.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3">
-            <LocalizedLink href="/store" className="px-6 py-3 rounded-full bg-black text-white text-xs uppercase tracking-[0.08em]">
-              🛍 Voir la boutique
-            </LocalizedLink>
-            <LocalizedLink href="/about" className="px-6 py-3 rounded-full border border-black text-xs uppercase tracking-[0.08em]">
-              📖 Notre histoire
-            </LocalizedLink>
+      <section className="relative overflow-hidden px-4 py-16 md:py-24">
+        <Image
+          src="/images/content/v2.jpg"
+          alt="Créations cousues main"
+          fill
+          priority
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="relative z-10 max-w-4xl mx-auto text-center text-white">
+          <div className="rounded-2xl  px-4 py-6 md:px-8 md:py-8">
+            <p className="text-xs md:text-sm uppercase tracking-[0.25em] mb-6 font-semibold text-white/95">
+              ✨ Cousu main · Genève
+            </p>
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif italic leading-tight mb-6 font-semibold text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.45)]">
+              Pièces uniques pour un style <span className="not-italic">qui vous ressemble</span>
+            </h1>
+            <p className="max-w-2xl mx-auto text-sm md:text-base mb-8 font-semibold text-white drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)]">
+              Des créations haute couture en éditions limitées, pensées et assemblées avec soin. Chaque pièce porte une histoire, la vôtre.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <LocalizedLink href="/store" className="px-6 py-3 rounded-full bg-black text-white text-xs uppercase tracking-[0.08em]">
+                🛍 Voir la boutique
+              </LocalizedLink>
+              <LocalizedLink href="/about" className="px-6 py-3 rounded-full border border-white text-white text-xs uppercase tracking-[0.08em] bg-black/20">
+                📖 Des questions ?
+              </LocalizedLink>
+            </div>
           </div>
         </div>
       </section>

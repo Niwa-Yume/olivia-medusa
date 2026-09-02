@@ -68,6 +68,12 @@ export const HeaderDrawer: React.FC<{
                   Bijoux
                 </LocalizedLink>
                 <LocalizedLink
+                  href="/services"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Services
+                </LocalizedLink>
+                <LocalizedLink
                   href="/about"
                   onClick={() => setIsMenuOpen(false)}
                 >
