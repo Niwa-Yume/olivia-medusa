@@ -26,6 +26,11 @@ const nextConfig = {
         protocol: "https",
         hostname: process.env.NEXT_PUBLIC_MEDIA_HOSTNAME || "example.invalid",
       },
+      {
+        protocol: "https",
+        hostname: "**.t3.storageapi.dev",
+        pathname: "/**",
+      },
     ],
   },
 }
