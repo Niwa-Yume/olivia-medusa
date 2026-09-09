@@ -32,6 +32,11 @@ const nextConfig = {
         hostname: "**.t3.storageapi.dev",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "pub-ffc6a569edf8409b994a6005580988b1.r2.dev",
+        pathname: "/**",
+      },
     ],
   },
 }
