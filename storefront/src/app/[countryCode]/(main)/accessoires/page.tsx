@@ -26,9 +26,8 @@ export default async function AccessoiresPage({ searchParams, params }: Params) 
       countryCode={countryCode}
       title="Accessoires"
       emoji="👜"
-      description="Sacs, pochette et foulards faits main, chaque détail compte."
+      description="Foulards, sacs et pochettes faits main, chaque détail compte."
       forcedType="Accessoires"
     />
   )
 }
-

@@ -20,7 +20,7 @@ const categories = [
   },
   {
     title: "Accessoires",
-    subtitle: "Sacs · Ceintures · Foulards",
+    subtitle: "Foulards · Sacs · Pochettes",
     href: "/accessoires",
     image: "/images/content/OliviaAccessoire.jpeg",
   },
